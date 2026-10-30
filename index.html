@@ -8,131 +8,403 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Reset">
 <link rel="manifest" href="manifest.json">
-<title>Reset Harian</title>
+<title>Life Reset RPG</title>
 <style>
   :root { color-scheme: dark; }
   * { box-sizing: border-box; }
   body { margin:0; font-family:-apple-system,system-ui,sans-serif; background:#0b1020; color:#e5e7eb;
-         padding: calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+         padding: calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 90px); }
   h1 { font-size:1.4rem; margin:0 0 14px; }
-  .card { background:#131a30; border-radius:16px; padding:16px; margin-bottom:14px; }
+  .card { background:#131a30; border-radius:16px; padding:16px; margin-bottom:14px; border: 1px solid #1f2743;}
   label { display:block; font-size:.85rem; color:#9ca3af; margin:10px 0 4px; }
-  input[type=range] { width:100%; }
-  textarea, input[type=text] { width:100%; padding:10px; border-radius:10px; border:1px solid #2a3350;
+  input[type=number], input[type=time], input[type=text], input[type=date], textarea, select { 
+    width:100%; padding:10px; border-radius:10px; border:1px solid #2a3350;
     background:#0b1020; color:#e5e7eb; font:inherit; margin-top:6px; }
   .row { display:flex; gap:8px; flex-wrap:wrap; }
-  button { flex:1; min-width:110px; padding:11px 14px; border-radius:12px; border:0;
-           background:#3b82f6; color:#fff; font-weight:600; font-size:.95rem; }
+  button { flex:1; min-width:110px; padding:12px 14px; border-radius:12px; border:0;
+           background:#3b82f6; color:#fff; font-weight:600; font-size:.95rem; cursor:pointer; }
   button.secondary { background:#2a3350; }
+  button.active { background:#10b981; }
   .habit { display:flex; justify-content:space-between; align-items:center;
-           padding:8px 0; border-bottom:1px solid #1f2743; }
-  .value { color:#93c5fd; font-weight:600; }
-  .streak { font-size:.85rem; color:#9ca3af; text-align:center; margin-top:12px; }
+           padding:10px 0; border-bottom:1px solid #1f2743; }
+  .habit:last-child { border-bottom:none; }
+  .streak { font-size:.9rem; color:#f59e0b; text-align:center; margin-bottom:16px; font-weight:bold; }
+  
+  /* Bottom Nav */
+  .bottom-nav { position:fixed; bottom:0; left:0; right:0; background:#131a30; display:flex; 
+                border-top:1px solid #1f2743; padding-bottom:env(safe-area-inset-bottom); z-index: 100;}
+  .nav-item { flex:1; text-align:center; padding:14px; font-size:.85rem; color:#6b7280; cursor:pointer;}
+  .nav-item.active { color:#3b82f6; font-weight:bold; }
+
+  /* Profile UI */
+  .profile-header { text-align:center; margin-bottom:20px; }
+  .avatar { width:80px; height:80px; border-radius:50%; background:#3b82f6; margin:0 auto 10px; 
+            display:flex; align-items:center; justify-content:center; font-size:2rem; font-weight:bold;}
+  .exp-bar-bg { width:100%; background:#1f2743; height:12px; border-radius:6px; margin-top:8px; overflow:hidden; }
+  .exp-bar-fill { height:100%; background:#10b981; width:0%; transition: width 0.5s; }
+  .age-ticker { font-size:1.1rem; color:#93c5fd; font-weight:bold; font-family:monospace; margin-top:8px; }
+  .hidden { display:none; }
 </style>
 </head>
 <body>
-<h1>Reset Harian</h1>
 
-<div class="card">
-  <label>Mood (1–5)</label>
-  <input type="range" id="mood" min="1" max="5" value="3">
-  <div class="value"><span id="moodV">3</span>/5</div>
+<!-- ================= HALAMAN HOME ================= -->
+<div id="view-home">
+  <h1>Reset Harian</h1>
+  <p class="streak" id="streak-display">🔥 Streak: 0 Hari</p>
 
-  <label>Energi (1–5)</label>
-  <input type="range" id="energy" min="1" max="5" value="3">
-  <div class="value"><span id="energyV">3</span>/5</div>
+  <!-- SLEEP & WAKE -->
+  <div class="card">
+    <label>😴 Tidur & ☀️ Bangun</label>
+    <div class="row" style="margin-top:8px;">
+      <button id="btn-sleep" class="secondary">Waktunya Tidur</button>
+      <button id="btn-wake" class="secondary">Aku Baru Bangun</button>
+    </div>
+    <p style="font-size:0.8rem; color:#9ca3af; margin-top:8px;" id="sleep-status">Belum ada data tidur/bangun hari ini.</p>
+  </div>
+
+  <!-- HIDRASI -->
+  <div class="card">
+    <div class="habit">
+      <div>
+        <label style="margin:0;">💧 Minum Air</label>
+        <span style="font-size:0.8rem; color:#9ca3af;" id="water-text">0 / 8 Gelas</span>
+      </div>
+      <div class="row" style="width:120px; margin:0;">
+        <button onclick="changeWater(-1)" class="secondary" style="min-width:40px; padding:8px;">-</button>
+        <button onclick="changeWater(1)" style="min-width:40px; padding:8px;">+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORKOUT -->
+  <div class="card">
+    <label>🏋️ Workout (Tentatif)</label>
+    <div class="row">
+      <div style="flex:1;">
+        <label>Push-up (x25)</label>
+        <input type="number" id="pushup" min="0" placeholder="0">
+      </div>
+      <div style="flex:1;">
+        <label>Sit-up (x25)</label>
+        <input type="number" id="situp" min="0" placeholder="0">
+      </div>
+    </div>
+    <label>Lari (KM)</label>
+    <input type="number" id="lari" min="0" step="0.1" placeholder="0.0">
+  </div>
+
+  <!-- OTAK & MENTAL -->
+  <div class="card">
+    <label>🧠 Otak & Mental</label>
+    <div class="habit"><span>Deep Work / Belajar</span><input type="checkbox" id="deepwork"></div>
+    <div class="habit"><span>Baca Buku</span><input type="checkbox" id="baca"></div>
+    <div class="habit"><span>Meditasi / Tenang</span><input type="checkbox" id="meditasi"></div>
+    <div class="habit"><span>📵 Digital Detox (No Doomscroll)</span><input type="checkbox" id="detox"></div>
+  </div>
+
+  <!-- RUTINITAS -->
+  <div class="card">
+    <label>🚿 & 🍽️ Rutinitas</label>
+    <div class="habit"><span>Mandi</span><input type="checkbox" id="mandi"></div>
+    <label>Makan Hari Ini (Utama)</label>
+    <select id="makan">
+      <option value="0">-- Pilih --</option>
+      <option value="2">Fast Food (+2 EXP)</option>
+      <option value="5">Karbo Berat / Nasi (+5 EXP)</option>
+      <option value="10">Nutrient / Clean (+10 EXP)</option>
+    </select>
+  </div>
+
+  <!-- JURNAL -->
+  <div class="card">
+    <label>📝 Jurnal & 3 Hal Bersyukur</label>
+    <textarea id="journal" rows="3" placeholder="Cerita hari ini..."></textarea>
+    <input type="text" id="g1" placeholder="Syukur 1...">
+    <input type="text" id="g2" placeholder="Syukur 2...">
+    <input type="text" id="g3" placeholder="Syukur 3...">
+  </div>
+
+  <button id="save-btn" style="width:100%; padding:16px; font-size:1.1rem; background:#8b5cf6;">Simpan & Klaim EXP</button>
 </div>
 
-<div class="card">
-  <label>Jurnal</label>
-  <textarea id="journal" rows="4" placeholder="Hari ini..."></textarea>
 
-  <label>3 Hal Bersyukur</label>
-  <input type="text" id="g1" placeholder="1...">
-  <input type="text" id="g2" placeholder="2...">
-  <input type="text" id="g3" placeholder="3...">
+<!-- ================= HALAMAN PROFILE ================= -->
+<div id="view-profile" class="hidden">
+  <h1>Profil Karakter</h1>
+  
+  <div class="card profile-header">
+    <div class="avatar" id="avatar-initial">D</div>
+    <label>Nama</label>
+    <input type="text" id="profile-name" placeholder="Nama Kamu">
+    <label>Tanggal Lahir</label>
+    <input type="date" id="profile-dob">
+    
+    <label style="margin-top:16px;">Usia Realtime</label>
+    <div class="age-ticker" id="age-display">Memuat...</div>
+  </div>
+
+  <div class="card">
+    <div class="habit" style="border:none; padding-bottom:0;">
+      <div>
+        <h2 style="margin:0; font-size:1.5rem;" id="display-level">Level 1</h2>
+        <span style="color:#f59e0b; font-weight:bold;" id="display-tier">Rookie</span>
+      </div>
+      <div style="text-align:right;">
+        <span style="font-size:0.8rem; color:#9ca3af;">Total EXP</span>
+        <h3 style="margin:0;" id="display-total-exp">0</h3>
+      </div>
+    </div>
+    <div class="exp-bar-bg">
+      <div class="exp-bar-fill" id="exp-fill"></div>
+    </div>
+    <p style="font-size:0.8rem; color:#9ca3af; text-align:right; margin-top:4px;" id="exp-text">0 / 250 EXP</p>
+  </div>
+
+  <button id="save-profile" class="secondary" style="width:100%;">Simpan Profil</button>
 </div>
 
-<div class="card">
-  <label>Habit</label>
-  <div id="habits"></div>
-</div>
 
-<div class="row">
-  <button id="save">Simpan</button>
-  <button id="export" class="secondary">Export</button>
+<!-- ================= NAVIGASI BAWAH ================= -->
+<div class="bottom-nav">
+  <div class="nav-item active" onclick="switchView('home')">🏠 Home</div>
+  <div class="nav-item" onclick="switchView('profile')">👤 Profil</div>
 </div>
-<div class="row" style="margin-top:8px">
-  <button id="importBtn" class="secondary">Import</button>
-  <input type="file" id="importFile" accept="application/json" hidden>
-</div>
-<p class="streak" id="streak"></p>
 
 <script>
-const KEY='reset-data-v1';
-const HABITS=['Olahraga','Baca','Tidur Cukup','No Scroll'];
-const today=new Date().toISOString().slice(0,10);
-const $=id=>document.getElementById(id);
+// ================= STATE =================
+const KEY = 'life-reset-rpg';
+let db = JSON.parse(localStorage.getItem(KEY)) || {
+  profile: { name: 'User', dob: '' },
+  stats: { totalExp: 0, streak: 0, lastSaveDate: '' },
+  today: { sleep: null, wake: null, water: 0, pushup: 0, situp: 0, lari: 0, 
+           deepwork: false, baca: false, meditasi: false, detox: false, mandi: false, makan: 0, 
+           journal: '', gratitude: ['','',''], saved: false }
+};
+const saveDB = () => localStorage.setItem(KEY, JSON.stringify(db));
+const $ = id => document.getElementById(id);
+const todayDate = new Date().toISOString().slice(0,10);
 
-const load=()=>{ try { return JSON.parse(localStorage.getItem(KEY)||'{}'); } catch { return {}; } };
-const save=d=>localStorage.setItem(KEY, JSON.stringify(d));
-
-let db=load();
-const entry=db[today]||{mood:3,energy:3,journal:'',gratitude:['','',''],habits:{}};
-
-$('mood').value=entry.mood;
-$('energy').value=entry.energy;
-$('journal').value=entry.journal;
-['g1','g2','g3'].forEach((id,i)=>$(id).value=entry.gratitude[i]||'');
-
-HABITS.forEach(h=>{
-  const div=document.createElement('div');
-  div.className='habit';
-  div.innerHTML=`<span>${h}</span><input type="checkbox" data-h="${h}" ${entry.habits[h]?'checked':''}>`;
-  $('habits').appendChild(div);
-});
-
-const syncVals=()=>{ $('moodV').textContent=$('mood').value; $('energyV').textContent=$('energy').value; };
-['mood','energy'].forEach(id=>$(id).addEventListener('input',syncVals));
-syncVals();
-
-function streak(data){
-  let s=0, d=new Date();
-  while(true){
-    const k=d.toISOString().slice(0,10);
-    if(data[k]){ s++; d.setDate(d.getDate()-1); } else break;
-  }
-  return s;
+// Reset Harian jika beda tanggal
+if (db.stats.lastSaveDate !== todayDate && db.stats.lastSaveDate !== '') {
+    db.today = { sleep: null, wake: null, water: 0, pushup: 0, situp: 0, lari: 0, 
+                 deepwork: false, baca: false, meditasi: false, detox: false, mandi: false, makan: 0, 
+                 journal: '', gratitude: ['','',''], saved: false };
+    let last = new Date(db.stats.lastSaveDate);
+    let curr = new Date(todayDate);
+    let diffDays = Math.ceil((curr - last) / (1000 * 60 * 60 * 24));
+    if (diffDays > 1) db.stats.streak = 0; // Streak putus
+    saveDB();
 }
-$('streak').textContent='🔥 Streak: '+streak(db)+' hari';
 
-$('save').onclick=()=>{
-  const d=load(); const habits={};
-  document.querySelectorAll('[data-h]').forEach(cb=>habits[cb.dataset.h]=cb.checked);
-  d[today]={ mood:+$('mood').value, energy:+$('energy').value,
-    journal:$('journal').value,
-    gratitude:['g1','g2','g3'].map(id=>$(id).value), habits };
-  save(d);
-  $('streak').textContent='🔥 Streak: '+streak(d)+' hari';
-  $('save').textContent='Tersimpan ✓';
-  setTimeout(()=>$('save').textContent='Simpan',1200);
+// ================= NAVIGASI =================
+function switchView(viewName) {
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  if (viewName === 'home') {
+    $('view-home').classList.remove('hidden');
+    $('view-profile').classList.add('hidden');
+    document.querySelectorAll('.nav-item')[0].classList.add('active');
+  } else {
+    $('view-home').classList.add('hidden');
+    $('view-profile').classList.remove('hidden');
+    document.querySelectorAll('.nav-item')[1].classList.add('active');
+    updateProfileUI();
+  }
+}
+
+// ================= LOGIKA HOME =================
+function loadToday() {
+  $('streak-display').innerText = `🔥 Streak: ${db.stats.streak} Hari`;
+  $('water-text').innerText = `${db.today.water} / 8 Gelas`;
+  $('pushup').value = db.today.pushup || '';
+  $('situp').value = db.today.situp || '';
+  $('lari').value = db.today.lari || '';
+  $('deepwork').checked = db.today.deepwork;
+  $('baca').checked = db.today.baca;
+  $('meditasi').checked = db.today.meditasi;
+  $('detox').checked = db.today.detox;
+  $('mandi').checked = db.today.mandi;
+  $('makan').value = db.today.makan;
+  $('journal').value = db.today.journal;
+  $('g1').value = db.today.gratitude[0] || '';
+  $('g2').value = db.today.gratitude[1] || '';
+  $('g3').value = db.today.gratitude[2] || '';
+  
+  if(db.today.sleep) $('btn-sleep').innerText = `Tidur: ${db.today.sleep}`;
+  if(db.today.wake) $('btn-wake').innerText = `Bangun: ${db.today.wake}`;
+  if(db.today.sleep && db.today.wake) $('sleep-status').innerText = "Waktu tidur & bangun sudah tercatat.";
+}
+
+window.changeWater = (val) => {
+  db.today.water = Math.max(0, db.today.water + val);
+  $('water-text').innerText = `${db.today.water} / 8 Gelas`;
+  saveDB();
+}
+
+// Tombol Tidur & Bangun
+$('btn-sleep').onclick = () => {
+  const now = new Date();
+  db.today.sleep = now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+  $('btn-sleep').innerText = `Tidur: ${db.today.sleep}`;
+  $('btn-sleep').classList.add('active');
+  saveDB();
+};
+$('btn-wake').onclick = () => {
+  const now = new Date();
+  db.today.wake = now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+  $('btn-wake').innerText = `Bangun: ${db.today.wake}`;
+  $('btn-wake').classList.add('active');
+  saveDB();
 };
 
-$('export').onclick=()=>{
-  const blob=new Blob([JSON.stringify(load(),null,2)],{type:'application/json'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='reset-backup-'+today+'.json';
-  a.click();
+// Simpan & Klaim EXP
+$('save-btn').onclick = () => {
+  if (db.today.saved) { alert("Hari ini sudah diklaim!"); return; }
+  
+  let exp = 0;
+  
+  // Hitung Air
+  exp += (db.today.water * 2);
+  if (db.today.water >= 8) exp += 10; // Bonus target
+  
+  // Hitung Workout
+  const pu = parseInt($('pushup').value) || 0;
+  const su = parseInt($('situp').value) || 0;
+  const lari = parseFloat($('lari').value) || 0;
+  exp += (Math.floor(pu / 25) * 5);
+  exp += (Math.floor(su / 25) * 5);
+  exp += (lari * 10);
+  
+  // Hitung Otak & Mental
+  if ($('deepwork').checked) exp += 15;
+  if ($('baca').checked) exp += 5;
+  if ($('meditasi').checked) exp += 10;
+  if ($('detox').checked) exp += 15;
+  
+  // Hitung Rutinitas
+  if ($('mandi').checked) exp += 5;
+  const makanVal = parseInt($('makan').value);
+  exp += makanVal;
+  
+  // Jurnal
+  const jurnalIsi = $('journal').value.trim().length > 0;
+  const syukurIsi = $('g1').value.trim() || $('g2').value.trim() || $('g3').value.trim();
+  if (jurnalIsi && syukurIsi) exp += 15;
+  
+  // Tidur & Bangun (Sederhana dulu)
+  if (db.today.sleep) exp += 10; // Anggap tidur normal dulu
+  if (db.today.wake) exp += 10;
+  
+  // Hitung Streak & Multiplier
+  let yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yDate = yesterday.toISOString().slice(0,10);
+  
+  if (db.stats.lastSaveDate === yDate) {
+    db.stats.streak += 1; // Lanjut
+  } else if (db.stats.lastSaveDate !== todayDate) {
+    db.stats.streak = 1; // Mulai baru
+  }
+  
+  let multiplier = 1;
+  if (db.stats.streak >= 60) multiplier = 3;
+  else if (db.stats.streak >= 30) multiplier = 2;
+  else if (db.stats.streak >= 14) multiplier = 1.5;
+  else if (db.stats.streak >= 7) multiplier = 1.2;
+  
+  let finalExp = Math.floor(exp * multiplier);
+  
+  // Simpan ke Database
+  db.today = {
+    sleep: db.today.sleep, wake: db.today.wake, water: db.today.water, 
+    pushup: pu, situp: su, lari: lari,
+    deepwork: $('deepwork').checked, baca: $('baca').checked, meditasi: $('meditasi').checked, 
+    detox: $('detox').checked, mandi: $('mandi').checked, makan: makanVal, 
+    journal: $('journal').value, gratitude: [$('g1').value, $('g2').value, $('g3').value], 
+    saved: true
+  };
+  
+  db.stats.totalExp += finalExp;
+  db.stats.lastSaveDate = todayDate;
+  saveDB();
+  
+  alert(`🔥 Mantap! Kamu dapat ${finalExp} EXP hari ini!\n(Streak: ${db.stats.streak} hari, Multiplier: ${multiplier}x)`);
+  loadToday();
+  updateProfileUI();
 };
-$('importBtn').onclick=()=>$('importFile').click();
-$('importFile').onchange=e=>{
-  const f=e.target.files[0]; if(!f) return;
-  const r=new FileReader();
-  r.onload=()=>{ try{ save(JSON.parse(r.result)); location.reload(); }
-                 catch{ alert('File tidak valid'); } };
-  r.readAsText(f);
+
+// ================= LOGIKA PROFILE =================
+function updateProfileUI() {
+  $('profile-name').value = db.profile.name;
+  $('profile-dob').value = db.profile.dob;
+  $('avatar-initial').innerText = db.profile.name.charAt(0).toUpperCase();
+  
+  // Hitung Level & EXP
+  let lvl = 1;
+  let expNeeded = 250;
+  let expLeft = db.stats.totalExp;
+  
+  while (expLeft >= expNeeded) {
+    expLeft -= expNeeded;
+    lvl++;
+    expNeeded = lvl * 250;
+  }
+  
+  $('display-level').innerText = `Level ${lvl}`;
+  $('display-total-exp').innerText = db.stats.totalExp;
+  $('exp-fill').style.width = `${(expLeft / expNeeded) * 100}%`;
+  $('exp-text').innerText = `${expLeft} / ${expNeeded} EXP ke Lvl ${lvl+1}`;
+  
+  // Tier
+  let tier = "Rookie";
+  if (lvl >= 50) tier = "Legend";
+  else if (lvl >= 25) tier = "Master";
+  else if (lvl >= 10) tier = "Discipline";
+  else if (lvl >= 5) tier = "Fighter";
+  $('display-tier').innerText = tier;
+}
+
+$('save-profile').onclick = () => {
+  db.profile.name = $('profile-name').value || 'User';
+  db.profile.dob = $('profile-dob').value;
+  saveDB();
+  updateProfileUI();
+  alert("Profil disimpan!");
 };
+
+// Ticker Umur Realtime
+setInterval(() => {
+  if (!db.profile.dob) {
+    $('age-display').innerText = "Isi tanggal lahir dulu.";
+    return;
+  }
+  const now = new Date();
+  const birth = new Date(db.profile.dob);
+  
+  let years = now.getFullYear() - birth.getFullYear();
+  let months = now.getMonth() - birth.getMonth();
+  let days = now.getDate() - birth.getDate();
+  let hours = now.getHours() - birth.getHours();
+  let mins = now.getMinutes() - birth.getMinutes();
+  let secs = now.getSeconds() - birth.getSeconds();
+
+  if (secs < 0) { secs += 60; mins--; }
+  if (mins < 0) { mins += 60; hours--; }
+  if (hours < 0) { hours += 24; days--; }
+  if (days < 0) { 
+    const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+    days += prevMonth; months--; 
+  }
+  if (months < 0) { months += 12; years--; }
+
+  $('age-display').innerText = `${years} Thn, ${months} Bln, ${days} Hari\n${hours} Jam, ${mins} Mnt, ${secs} Dtk`;
+}, 1000);
+
+// Inisialisasi
+loadToday();
+updateProfileUI();
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>
 </body>
 </html>
