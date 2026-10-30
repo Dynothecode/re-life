@@ -63,6 +63,17 @@
     <p style="font-size:0.8rem; color:#9ca3af; margin-top:8px;" id="sleep-status">Belum ada data tidur/bangun hari ini.</p>
   </div>
 
+  <!-- KARIER / KERJA -->
+  <div class="card">
+    <label>💼 Karier & Kerja</label>
+    <div class="habit">
+      <span>Masuk Kerja / Hadir</span>
+      <input type="checkbox" id="kerja-hadir">
+    </div>
+    <label>Jam Kerja Fokus (Tanpa Distraksi)</label>
+    <input type="number" id="kerja-jam" min="0" step="0.5" placeholder="Contoh: 2.5">
+  </div>
+
   <!-- HIDRASI -->
   <div class="card">
     <div class="habit">
@@ -97,8 +108,7 @@
   <!-- OTAK & MENTAL -->
   <div class="card">
     <label>🧠 Otak & Mental</label>
-    <div class="habit"><span>Deep Work / Belajar</span><input type="checkbox" id="deepwork"></div>
-    <div class="habit"><span>Baca Buku</span><input type="checkbox" id="baca"></div>
+    <div class="habit"><span>Belajar / Baca Buku</span><input type="checkbox" id="baca"></div>
     <div class="habit"><span>Meditasi / Tenang</span><input type="checkbox" id="meditasi"></div>
     <div class="habit"><span>📵 Digital Detox (No Doomscroll)</span><input type="checkbox" id="detox"></div>
   </div>
@@ -134,7 +144,7 @@
   <h1>Profil Karakter</h1>
   
   <div class="card profile-header">
-    <div class="avatar" id="avatar-initial">D</div>
+    <div class="avatar" id="avatar-initial">U</div>
     <label>Nama</label>
     <input type="text" id="profile-name" placeholder="Nama Kamu">
     <label>Tanggal Lahir</label>
@@ -178,7 +188,8 @@ let db = JSON.parse(localStorage.getItem(KEY)) || {
   profile: { name: 'User', dob: '' },
   stats: { totalExp: 0, streak: 0, lastSaveDate: '' },
   today: { sleep: null, wake: null, water: 0, pushup: 0, situp: 0, lari: 0, 
-           deepwork: false, baca: false, meditasi: false, detox: false, mandi: false, makan: 0, 
+           kerjaHadir: false, kerjaJam: 0,
+           baca: false, meditasi: false, detox: false, mandi: false, makan: 0, 
            journal: '', gratitude: ['','',''], saved: false }
 };
 const saveDB = () => localStorage.setItem(KEY, JSON.stringify(db));
@@ -188,7 +199,8 @@ const todayDate = new Date().toISOString().slice(0,10);
 // Reset Harian jika beda tanggal
 if (db.stats.lastSaveDate !== todayDate && db.stats.lastSaveDate !== '') {
     db.today = { sleep: null, wake: null, water: 0, pushup: 0, situp: 0, lari: 0, 
-                 deepwork: false, baca: false, meditasi: false, detox: false, mandi: false, makan: 0, 
+                 kerjaHadir: false, kerjaJam: 0,
+                 baca: false, meditasi: false, detox: false, mandi: false, makan: 0, 
                  journal: '', gratitude: ['','',''], saved: false };
     let last = new Date(db.stats.lastSaveDate);
     let curr = new Date(todayDate);
@@ -219,7 +231,8 @@ function loadToday() {
   $('pushup').value = db.today.pushup || '';
   $('situp').value = db.today.situp || '';
   $('lari').value = db.today.lari || '';
-  $('deepwork').checked = db.today.deepwork;
+  $('kerja-hadir').checked = db.today.kerjaHadir;
+  $('kerja-jam').value = db.today.kerjaJam || '';
   $('baca').checked = db.today.baca;
   $('meditasi').checked = db.today.meditasi;
   $('detox').checked = db.today.detox;
@@ -263,6 +276,12 @@ $('save-btn').onclick = () => {
   
   let exp = 0;
   
+  // Karier
+  const hadir = $('kerja-hadir').checked;
+  const jamKerja = parseFloat($('kerja-jam').value) || 0;
+  if (hadir) exp += 10;
+  exp += (jamKerja * 15);
+  
   // Hitung Air
   exp += (db.today.water * 2);
   if (db.today.water >= 8) exp += 10; // Bonus target
@@ -276,7 +295,6 @@ $('save-btn').onclick = () => {
   exp += (lari * 10);
   
   // Hitung Otak & Mental
-  if ($('deepwork').checked) exp += 15;
   if ($('baca').checked) exp += 5;
   if ($('meditasi').checked) exp += 10;
   if ($('detox').checked) exp += 15;
@@ -291,8 +309,8 @@ $('save-btn').onclick = () => {
   const syukurIsi = $('g1').value.trim() || $('g2').value.trim() || $('g3').value.trim();
   if (jurnalIsi && syukurIsi) exp += 15;
   
-  // Tidur & Bangun (Sederhana dulu)
-  if (db.today.sleep) exp += 10; // Anggap tidur normal dulu
+  // Tidur & Bangun
+  if (db.today.sleep) exp += 10; 
   if (db.today.wake) exp += 10;
   
   // Hitung Streak & Multiplier
@@ -318,8 +336,9 @@ $('save-btn').onclick = () => {
   db.today = {
     sleep: db.today.sleep, wake: db.today.wake, water: db.today.water, 
     pushup: pu, situp: su, lari: lari,
-    deepwork: $('deepwork').checked, baca: $('baca').checked, meditasi: $('meditasi').checked, 
-    detox: $('detox').checked, mandi: $('mandi').checked, makan: makanVal, 
+    kerjaHadir: hadir, kerjaJam: jamKerja,
+    baca: $('baca').checked, meditasi: $('meditasi').checked, detox: $('detox').checked, 
+    mandi: $('mandi').checked, makan: makanVal, 
     journal: $('journal').value, gratitude: [$('g1').value, $('g2').value, $('g3').value], 
     saved: true
   };
@@ -337,7 +356,7 @@ $('save-btn').onclick = () => {
 function updateProfileUI() {
   $('profile-name').value = db.profile.name;
   $('profile-dob').value = db.profile.dob;
-  $('avatar-initial').innerText = db.profile.name.charAt(0).toUpperCase();
+  if(db.profile.name) $('avatar-initial').innerText = db.profile.name.charAt(0).toUpperCase();
   
   // Hitung Level & EXP
   let lvl = 1;
