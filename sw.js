@@ -1,9 +1,9 @@
-const CACHE = 'reset-v4';
+const CACHE = 'reset-v5'; // <--- UBAH KE v5
 const ASSETS = [
   './',
   './index.html',
-  './style.css',   /* Tambahan baru */
-  './script.js',   /* Tambahan baru */
+  './style.css',
+  './script.js',
   './manifest.json',
   './icon-192.png',
   './icon-512.png'
