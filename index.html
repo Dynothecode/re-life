@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Life Reset RPG">
 <title>Life Reset RPG</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -57,9 +59,7 @@
 
   <div class="card milestone-card">
     <h2>🏆 Milestones</h2>
-    <ul class="milestone-list" id="milestone-list">
-      <!-- Akan diisi via JS -->
-    </ul>
+    <ul class="milestone-list" id="milestone-list"></ul>
   </div>
 
   <div class="quote-container">
@@ -72,39 +72,39 @@
   <h1>Quest Board</h1>
   <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 0.9rem;">Geser (swipe) untuk melihat kategori lain 👉</p>
   
-  <div class="slider-container">
+  <div class="slider-container" id="quest-slider">
     
-    <!-- DAILY QUESTS -->
-    <div class="slider-card card">
-      <h2 style="color: var(--accent-blue);">☀️ Daily Quests</h2>
+    <!-- DAILY QUESTS (ORANGE) -->
+    <div class="slider-card card theme-daily">
+      <h2 style="color: var(--accent-orange);">☀️ Daily Quests</h2>
       <p class="quest-subtitle">Reset setiap hari</p>
       <div class="quest-list" id="list-daily"></div>
     </div>
 
-    <!-- WEEKLY QUESTS -->
-    <div class="slider-card card">
-      <h2 style="color: var(--accent-cyan);">📅 Weekly Quests</h2>
+    <!-- WEEKLY QUESTS (BLUE) -->
+    <div class="slider-card card theme-weekly">
+      <h2 style="color: var(--accent-blue);">📅 Weekly Quests</h2>
       <p class="quest-subtitle">Reset setiap minggu</p>
       <div class="quest-list" id="list-weekly"></div>
     </div>
 
-    <!-- MONTHLY QUESTS -->
-    <div class="slider-card card">
-      <h2 style="color: var(--accent-rpg);">🌙 Monthly Quests</h2>
+    <!-- MONTHLY QUESTS (EMERALD) -->
+    <div class="slider-card card theme-monthly">
+      <h2 style="color: var(--accent-green);">🌙 Monthly Quests</h2>
       <p class="quest-subtitle">Reset setiap bulan</p>
       <div class="quest-list" id="list-monthly"></div>
     </div>
 
-    <!-- EVENT: GOLDEN WEEK -->
-    <div class="slider-card card golden-week-card" id="golden-week-card">
-      <h2 style="color: #FFD700;">✨ Golden Week ✨</h2>
+    <!-- EVENT: GOLDEN WEEK (RED) -->
+    <div class="slider-card card theme-event" id="golden-week-card">
+      <h2 style="color: var(--accent-red);">✨ Golden Week ✨</h2>
       <p class="quest-subtitle" id="golden-week-status">Event belum aktif</p>
       <div class="quest-list" id="list-event"></div>
     </div>
 
-    <!-- YEARLY QUESTS -->
-    <div class="slider-card card">
-      <h2 style="color: var(--accent-orange);">🎯 Yearly Goals</h2>
+    <!-- YEARLY QUESTS (PURPLE) -->
+    <div class="slider-card card theme-yearly">
+      <h2 style="color: var(--accent-rpg);">🎯 Yearly Goals</h2>
       <p class="quest-subtitle">Self Reward & Pencapaian Besar</p>
       <div class="quest-list" id="list-yearly"></div>
     </div>
@@ -137,7 +137,7 @@
     <div class="habit" style="border:none; padding-bottom:0;">
       <div>
         <h2 class="m-0" style="font-size:1.5rem;" id="display-level">Level 1</h2>
-        <span style="color:var(--accent-orange); font-weight:bold;" id="display-tier">Rookie</span>
+        <span style="color:var(--accent-orange); font-weight:bold;" id="display-tier">Tier E</span>
       </div>
       <div class="text-right">
         <span style="font-size:0.8rem; color:var(--text-secondary);">Total EXP</span>
