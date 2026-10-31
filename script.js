@@ -1,7 +1,7 @@
 // ================= STATE =================
 const KEY = 'life-reset-rpg';
 let db = JSON.parse(localStorage.getItem(KEY)) || {
-  profile: { name: 'User', dob: '' },
+  profile: { name: 'User', dob: '', avatar: '' }, // <-- avatar ditambahin
   stats: { totalExp: 0, streak: 0, lastSaveDate: '' },
   today: { sleep: null, wake: null, water: 0, pushup: 0, situp: 0, lari: 0, 
            kerjaHadir: false, kerjaJam: 0,
@@ -168,7 +168,7 @@ $('save-btn').onclick = () => {
   loadToday();
 };
 
-// ================= LOGIKA HUD & PROFILE =================
+// ================= LOGIKA HUD & PROFILE (UPDATED) =================
 function updateHUD() {
   let lvl = 1;
   let expNeeded = 250;
@@ -184,8 +184,15 @@ function updateHUD() {
   $('hud-streak').innerText = db.stats.streak;
   $('hud-exp-fill').style.width = `${(expLeft / expNeeded) * 100}%`;
   
-  if(db.profile.name) {
-    $('hud-avatar-initial').innerText = db.profile.name.charAt(0).toUpperCase();
+  // Logika Tampil Foto HUD
+  if (db.profile.avatar) {
+    $('hud-avatar-img').src = db.profile.avatar;
+    $('hud-avatar-img').classList.remove('hidden');
+    $('hud-avatar-initial').classList.add('hidden');
+  } else {
+    $('hud-avatar-img').classList.add('hidden');
+    $('hud-avatar-initial').classList.remove('hidden');
+    if(db.profile.name) $('hud-avatar-initial').innerText = db.profile.name.charAt(0).toUpperCase();
   }
 }
 
@@ -200,7 +207,17 @@ function getTier(lvl) {
 function updateProfileUI() {
   $('profile-name').value = db.profile.name;
   $('profile-dob').value = db.profile.dob;
-  if(db.profile.name) $('avatar-initial').innerText = db.profile.name.charAt(0).toUpperCase();
+  
+  // Logika Tampil Foto Profil
+  if (db.profile.avatar) {
+    $('profile-avatar-img').src = db.profile.avatar;
+    $('profile-avatar-img').classList.remove('hidden');
+    $('avatar-initial').classList.add('hidden');
+  } else {
+    $('profile-avatar-img').classList.add('hidden');
+    $('avatar-initial').classList.remove('hidden');
+    if(db.profile.name) $('avatar-initial').innerText = db.profile.name.charAt(0).toUpperCase();
+  }
   
   let lvl = 1;
   let expNeeded = 250;
@@ -256,11 +273,6 @@ setInterval(() => {
   $('age-display').innerHTML = `${years} Thn, ${months} Bln, ${days} Hari<br>${hours} Jam, ${mins} Mnt, ${secs} Dtk`;
 }, 1000);
 
-// Inisialisasi awal
-loadToday();
-updateProfileUI();
-
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 // ================= LOGIKA UPLOAD FOTO PROFIL =================
 $('avatar-upload').addEventListener('change', function(e) {
   const file = e.target.files[0];
@@ -270,22 +282,15 @@ $('avatar-upload').addEventListener('change', function(e) {
   reader.onload = function(event) {
     const img = new Image();
     img.onload = function() {
-      // Resize gambar biar nggak berat di localStorage
       const canvas = document.createElement('canvas');
       const MAX_SIZE = 200;
       let width = img.width;
       let height = img.height;
 
       if (width > height) {
-        if (width > MAX_SIZE) {
-          height *= MAX_SIZE / width;
-          width = MAX_SIZE;
-        }
+        if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
       } else {
-        if (height > MAX_SIZE) {
-          width *= MAX_SIZE / height;
-          height = MAX_SIZE;
-        }
+        if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
       }
 
       canvas.width = width;
@@ -293,14 +298,11 @@ $('avatar-upload').addEventListener('change', function(e) {
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, width, height);
 
-      // Simpan sebagai string Base64 (kualitas 0.8)
       const base64String = canvas.toDataURL('image/jpeg', 0.8);
       
-      // Simpan ke DB
       db.profile.avatar = base64String;
       saveDB();
       
-      // Update Tampilan
       updateHUD();
       updateProfileUI();
       showToast("📸 Foto profil berhasil diperbarui!");
@@ -309,3 +311,9 @@ $('avatar-upload').addEventListener('change', function(e) {
   };
   reader.readAsDataURL(file);
 });
+
+// Inisialisasi awal
+loadToday();
+updateProfileUI();
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
