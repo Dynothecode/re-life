@@ -292,3 +292,8 @@ button.active { background: var(--accent-green); color: #000; }
 @media (hover: none) {
   .edit-badge { opacity: 1; }
 }
+/* ... (taruh di paling bawah) ... */
+#export-btn, #import-btn {
+  font-size: 0.9rem;
+  padding: 12px;
+}
