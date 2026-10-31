@@ -1,4 +1,4 @@
-const CACHE = 'reset-v6'; // <--- UBAH KE v5
+const CACHE = 'reset-v10'; // <--- UBAH KE v5
 const ASSETS = [
   './',
   './index.html',
