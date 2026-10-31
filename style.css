@@ -258,3 +258,37 @@ button.active { background: var(--accent-green); color: #000; }
 .icon-green { stroke: var(--accent-green); }
 .icon-orange { stroke: var(--accent-orange); }
 .icon-blue { stroke: var(--accent-blue); }
+/* Avatar Image & Edit Badge */
+.avatar, .hud-avatar {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.edit-badge {
+  position: absolute;
+  bottom: 0; right: 0;
+  background: var(--bg-card);
+  border: 2px solid var(--text-secondary);
+  border-radius: 50%;
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem;
+  opacity: 0;
+  transition: var(--transition);
+}
+.avatar:hover .edit-badge {
+  opacity: 1; /* Muncul saat mouse diarahkan */
+}
+
+/* Khusus di HP, biar badge selalu kelihatan */
+@media (hover: none) {
+  .edit-badge { opacity: 1; }
+}
