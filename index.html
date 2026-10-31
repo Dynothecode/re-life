@@ -5,23 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Life Reset RPG">
 <title>Life Reset RPG</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-<!-- Hubungkan ke file CSS -->
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- ================= SPLASH SCREEN ================= -->
+<!-- SPLASH SCREEN -->
 <div id="splash-screen" class="splash">
   <h1 class="splash-text">LIFE RESET RPG</h1>
 </div>
 
-<!-- ================= HEAD-UP DISPLAY (HUD) ================= -->
+<!-- HEAD-UP DISPLAY (HUD) -->
 <header class="hud-top">
   <div class="hud-avatar-wrapper" onclick="switchView('profile')">
     <div class="hud-avatar" id="hud-avatar-box">
@@ -41,129 +38,81 @@
   </div>
 </header>
 
-<!-- ================= HALAMAN HOME ================= -->
+<!-- ================= MENU 1: HOME (DASHBOARD) ================= -->
 <div id="view-home" class="app-content">
-  <h1>Reset Harian</h1>
+  <h1>Dashboard</h1>
   
-  <div class="card delay-1">
-    <h2>
-      <svg class="icon icon-blue" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
-      Tidur & 
-      <svg class="icon icon-orange" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>
-      Bangun
-    </h2>
-    <div class="row mt-12">
-      <button id="btn-sleep" class="secondary">Waktunya Tidur</button>
-      <button id="btn-wake" class="secondary">Aku Baru Bangun</button>
+  <div class="card hero-card text-center">
+    <h2 style="font-size: 3rem; margin-bottom: 0;" id="home-level">Lv. 1</h2>
+    <div class="tier-badge" id="home-tier">TIER E</div>
+    
+    <p style="color: var(--text-secondary); margin-top: 20px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Total EXP Dirampas</p>
+    <h3 style="font-size: 2rem; color: var(--accent-green); font-family: var(--font-mono);" id="home-total-exp">0</h3>
+    
+    <div class="hud-exp-container" style="height: 12px; margin-top: 16px;">
+      <div class="hud-exp-fill" id="home-exp-fill"></div>
     </div>
-    <p class="text-center mt-12" style="font-size:0.85rem; color:var(--text-secondary);" id="sleep-status">Belum ada data tidur/bangun hari ini.</p>
+    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 8px;" id="home-exp-text">0 / 250 EXP ke Lvl berikutnya</p>
   </div>
 
-  <div class="card delay-2">
-    <h2>
-      <svg class="icon icon-blue" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-      Karier & Kerja
-    </h2>
-    <div class="habit">
-      <label class="habit-label" for="kerja-hadir">Masuk Kerja / Hadir</label>
-      <input type="checkbox" id="kerja-hadir" class="custom-checkbox">
-      <label for="kerja-hadir" class="checkbox-ui"></label>
-    </div>
-    <label class="mt-16">Jam Kerja Fokus (Tanpa Distraksi)</label>
-    <input type="number" id="kerja-jam" min="0" step="0.5" placeholder="Contoh: 2.5">
+  <div class="card milestone-card">
+    <h2>🏆 Milestones</h2>
+    <ul class="milestone-list" id="milestone-list">
+      <!-- Akan diisi via JS -->
+    </ul>
   </div>
 
-  <div class="card delay-3">
-    <div class="habit" style="border:none; padding:0;">
-      <div>
-        <h2 class="m-0">
-          <svg class="icon icon-blue" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"></path></svg>
-          Minum Air
-        </h2>
-        <span style="font-size:0.9rem; color:var(--text-secondary); font-family: var(--font-mono);" id="water-text">0 / 8 Gelas</span>
-      </div>
-      <div class="water-buttons">
-        <button onclick="changeWater(-1)" class="secondary">-</button>
-        <button onclick="changeWater(1)">+</button>
-      </div>
-    </div>
+  <div class="quote-container">
+    <p id="daily-quote">"Loading quote..."</p>
   </div>
-
-  <div class="card delay-4">
-    <h2>
-      <svg class="icon icon-green" viewBox="0 0 24 24"><path d="M14.4 14.4 9.6 9.6"></path><path d="M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z"></path><path d="m21.5 21.5-1.4-1.4"></path><path d="M3.9 3.9 2.5 2.5"></path><path d="M6.404 12.768a2 2 0 1 1-2.829-2.829l1.768-1.767a2 2 0 1 1-2.828-2.829l2.828-2.828a2 2 0 1 1 2.829 2.828l1.767-1.768a2 2 0 1 1 2.829 2.829z"></path></svg>
-      Workout
-    </h2>
-    <div class="row">
-      <div class="flex-1">
-        <label>Push-up (x25)</label>
-        <input type="number" id="pushup" min="0" placeholder="0">
-      </div>
-      <div class="flex-1">
-        <label>Sit-up (x25)</label>
-        <input type="number" id="situp" min="0" placeholder="0">
-      </div>
-    </div>
-    <label>Lari (KM)</label>
-    <input type="number" id="lari" min="0" step="0.1" placeholder="0.0">
-  </div>
-
-  <div class="card delay-5">
-    <h2>
-      <svg class="icon icon-blue" viewBox="0 0 24 24"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"></path><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"></path></svg>
-      Otak & Mental
-    </h2>
-    <div class="habit">
-      <label class="habit-label" for="baca">Belajar / Baca Buku</label>
-      <input type="checkbox" id="baca" class="custom-checkbox">
-      <label for="baca" class="checkbox-ui"></label>
-    </div>
-    <div class="habit">
-      <label class="habit-label" for="meditasi">Meditasi / Tenang</label>
-      <input type="checkbox" id="meditasi" class="custom-checkbox">
-      <label for="meditasi" class="checkbox-ui"></label>
-    </div>
-    <div class="habit">
-      <label class="habit-label" for="detox">Digital Detox</label>
-      <input type="checkbox" id="detox" class="custom-checkbox">
-      <label for="detox" class="checkbox-ui"></label>
-    </div>
-  </div>
-
-  <div class="card delay-6">
-    <h2>
-      <svg class="icon icon-blue" viewBox="0 0 24 24"><path d="M4 4v16"></path><path d="M20 4v16"></path><path d="M4 8h16"></path><path d="M4 16h16"></path><path d="M8 4v4"></path><path d="M16 4v4"></path><path d="M8 16v4"></path><path d="M16 16v4"></path></svg>
-      Rutinitas & Makan
-    </h2>
-    <div class="habit">
-      <label class="habit-label" for="mandi">Mandi</label>
-      <input type="checkbox" id="mandi" class="custom-checkbox">
-      <label for="mandi" class="checkbox-ui"></label>
-    </div>
-    <label class="mt-16">Makan Hari Ini (Utama)</label>
-    <select id="makan">
-      <option value="0">-- Pilih --</option>
-      <option value="2">Fast Food (+2 EXP)</option>
-      <option value="5">Karbo Berat / Nasi (+5 EXP)</option>
-      <option value="10">Nutrient / Clean (+10 EXP)</option>
-    </select>
-  </div>
-
-  <div class="card delay-7">
-    <h2>
-      <svg class="icon icon-orange" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path><path d="M8 7h8"></path><path d="M8 11h8"></path></svg>
-      Jurnal & 3 Hal Bersyukur
-    </h2>
-    <textarea id="journal" rows="3" placeholder="Cerita hari ini..." class="mt-12"></textarea>
-    <input type="text" id="g1" placeholder="Syukur 1..." class="mt-8">
-    <input type="text" id="g2" placeholder="Syukur 2..." class="mt-8">
-    <input type="text" id="g3" placeholder="Syukur 3..." class="mt-8">
-  </div>
-
-  <button id="save-btn" class="save-btn">Simpan & Klaim EXP</button>
 </div>
 
-<!-- ================= HALAMAN PROFILE ================= -->
+<!-- ================= MENU 2: QUEST (SLIDER) ================= -->
+<div id="view-quests" class="hidden app-content">
+  <h1>Quest Board</h1>
+  <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 0.9rem;">Geser (swipe) untuk melihat kategori lain 👉</p>
+  
+  <div class="slider-container">
+    
+    <!-- DAILY QUESTS -->
+    <div class="slider-card card">
+      <h2 style="color: var(--accent-blue);">☀️ Daily Quests</h2>
+      <p class="quest-subtitle">Reset setiap hari</p>
+      <div class="quest-list" id="list-daily"></div>
+    </div>
+
+    <!-- WEEKLY QUESTS -->
+    <div class="slider-card card">
+      <h2 style="color: var(--accent-cyan);">📅 Weekly Quests</h2>
+      <p class="quest-subtitle">Reset setiap minggu</p>
+      <div class="quest-list" id="list-weekly"></div>
+    </div>
+
+    <!-- MONTHLY QUESTS -->
+    <div class="slider-card card">
+      <h2 style="color: var(--accent-rpg);">🌙 Monthly Quests</h2>
+      <p class="quest-subtitle">Reset setiap bulan</p>
+      <div class="quest-list" id="list-monthly"></div>
+    </div>
+
+    <!-- EVENT: GOLDEN WEEK -->
+    <div class="slider-card card golden-week-card" id="golden-week-card">
+      <h2 style="color: #FFD700;">✨ Golden Week ✨</h2>
+      <p class="quest-subtitle" id="golden-week-status">Event belum aktif</p>
+      <div class="quest-list" id="list-event"></div>
+    </div>
+
+    <!-- YEARLY QUESTS -->
+    <div class="slider-card card">
+      <h2 style="color: var(--accent-orange);">🎯 Yearly Goals</h2>
+      <p class="quest-subtitle">Self Reward & Pencapaian Besar</p>
+      <div class="quest-list" id="list-yearly"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= MENU 3: PROFILE ================= -->
 <div id="view-profile" class="hidden app-content">
   <h1>Profil Karakter</h1>
   
@@ -201,10 +150,8 @@
     <p class="text-right mt-8" style="font-size:0.8rem; color:var(--text-secondary);" id="exp-text">0 / 250 EXP</p>
   </div>
 
-  <!-- TOMBOL SIMPAN PROFIL -->
   <button id="save-profile" class="secondary" style="width:100%; margin-bottom: 10px;">Simpan Profil</button>
   
-  <!-- FITUR BACKUP -->
   <div style="display: flex; gap: 10px;">
     <button id="export-btn" class="secondary" style="flex: 1;">📥 Export Data</button>
     <button id="import-btn" class="secondary" style="flex: 1;">📤 Import Data</button>
@@ -215,19 +162,20 @@
 <!-- ================= NAVIGASI BAWAH ================= -->
 <div class="bottom-nav">
   <div class="nav-item active" onclick="switchView('home')">
-    <svg class="icon" style="margin-right:4px; margin-bottom:2px;" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    <svg class="icon" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
     Home
   </div>
+  <div class="nav-item" onclick="switchView('quests')">
+    <svg class="icon" viewBox="0 0 24 24"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+    Quest
+  </div>
   <div class="nav-item" onclick="switchView('profile')">
-    <svg class="icon" style="margin-right:4px; margin-bottom:2px;" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+    <svg class="icon" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
     Profil
   </div>
 </div>
 
-<!-- Toast Container -->
 <div id="toast" class="toast">Test</div>
-
-<!-- Hubungkan ke file JavaScript -->
 <script src="script.js"></script>
 </body>
 </html>
