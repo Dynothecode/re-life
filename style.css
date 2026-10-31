@@ -242,3 +242,19 @@ button.active { background: var(--accent-green); color: #000; }
   body { max-width: 600px; margin: 0 auto; }
   .bottom-nav { max-width: 600px; margin: 0 auto; border-radius: 20px 20px 0 0; border: 1px solid #38383A; border-bottom: none;}
 }
+/* CSS untuk Icon SVG */
+.icon {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  vertical-align: middle;
+  margin-right: 8px;
+  margin-bottom: 3px;
+}
+.icon-green { stroke: var(--accent-green); }
+.icon-orange { stroke: var(--accent-orange); }
+.icon-blue { stroke: var(--accent-blue); }
