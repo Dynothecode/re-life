@@ -1,7 +1,6 @@
 const KEY = 'life-reset-rpg-v2'; 
 const $ = id => document.getElementById(id);
 
-// ================= QUOTES =================
 const QUOTES = [
   "Disiplin adalah jembatan antara tujuan dan pencapaian.",
   "Jangan hitung hari-harinya, buatlah hari-harimu berarti.",
@@ -11,7 +10,6 @@ const QUOTES = [
   "Rasa sakit dari disiplin jauh lebih ringan daripada rasa sakit dari penyesalan."
 ];
 
-// ================= STATE & DATA =================
 let db = JSON.parse(localStorage.getItem(KEY)) || {
   profile: { name: 'User', dob: '', avatar: '' },
   stats: { totalExp: 0, streak: 0, lastSaveDate: '' },
@@ -54,7 +52,6 @@ let db = JSON.parse(localStorage.getItem(KEY)) || {
 const saveDB = () => localStorage.setItem(KEY, JSON.stringify(db));
 const todayDate = new Date().toISOString().slice(0,10);
 
-// ================= LOGIKA RESET WAKTU =================
 function checkResets() {
   const now = new Date();
   const today = now.toISOString().slice(0,10);
@@ -87,7 +84,6 @@ function checkResets() {
   }
 }
 
-// ================= LOGIKA GOLDEN WEEK =================
 function getGoldenWeekMultiplier() {
   const now = new Date();
   const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
@@ -102,7 +98,6 @@ function getGoldenWeekMultiplier() {
   return { active: true, multiplier: mult };
 }
 
-// ================= LOGIKA LEVEL & TIER =================
 function getLevelData() {
   let lvl = 1;
   let expNeeded = 250;
@@ -127,7 +122,6 @@ function getTier(lvl) {
   return "E";
 }
 
-// ================= RENDER UI =================
 function updateHUD() {
   const { lvl, expLeft, expNeeded } = getLevelData();
   const tier = getTier(lvl);
@@ -156,6 +150,7 @@ function updateHUD() {
 function renderQuests() {
   const renderList = (listId, questList, isEvent = false) => {
     const container = $(listId);
+    if(!container) return;
     container.innerHTML = '';
     const gw = getGoldenWeekMultiplier();
     
@@ -206,6 +201,7 @@ function renderQuests() {
 
 function renderMilestones() {
   const container = $('milestone-list');
+  if(!container) return;
   container.innerHTML = '';
   db.milestones.forEach(m => {
     const li = document.createElement('li');
@@ -215,7 +211,6 @@ function renderMilestones() {
   });
 }
 
-// ================= LOGIKA KLAIM EXP =================
 function claimQuest(quest, expGained) {
   quest.done = true;
   db.stats.totalExp += expGained;
@@ -241,7 +236,6 @@ function checkMilestones() {
   }
 }
 
-// ================= NAVIGASI & INIT =================
 function switchView(viewName) {
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   ['home', 'quests', 'profile'].forEach(v => $(`view-${v}`).classList.add('hidden'));
@@ -253,7 +247,7 @@ function switchView(viewName) {
   if (viewName === 'profile') updateProfileUI();
   if (viewName === 'quests') {
     renderQuests();
-    setTimeout(updateCardRotations, 50); // Delay sedikit biar render CSS selesai
+    setTimeout(updateCardRotations, 50);
   }
 }
 
@@ -367,7 +361,6 @@ setInterval(() => {
   $('age-display').innerHTML = `${years} Thn, ${months} Bln, ${days} Hari<br>${hours} Jam, ${mins} Mnt, ${secs} Dtk`;
 }, 1000);
 
-// ================= ANIMASI 3D FLIP (COVER FLOW) =================
 const questSlider = document.getElementById('quest-slider');
 const questCards = document.querySelectorAll('.slider-card');
 
@@ -396,7 +389,6 @@ questSlider.addEventListener('scroll', () => {
 
 window.addEventListener('resize', updateCardRotations);
 
-// INITIALIZATION
 checkResets();
 updateHUD();
 updateProfileUI();
