@@ -311,7 +311,52 @@ $('avatar-upload').addEventListener('change', function(e) {
   };
   reader.readAsDataURL(file);
 });
+// ================= FITUR EXPORT & IMPORT =================
+$('export-btn').onclick = () => {
+  const dataStr = JSON.stringify(db, null, 2);
+  const blob = new Blob([dataStr], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `life-reset-backup-${todayDate}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast("📥 Backup berhasil di-download!");
+};
 
+$('import-btn').onclick = () => {
+  $('import-file').click();
+};
+
+$('import-file').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    try {
+      const importedData = JSON.parse(event.target.result);
+      
+      // Validasi data sederhana
+      if (importedData.profile && importedData.stats && importedData.today) {
+        db = importedData; // Timpa database lama
+        saveDB();
+        loadToday();
+        updateProfileUI();
+        updateHUD();
+        showToast("📤 Data berhasil di-restore!");
+      } else {
+        showToast("❌ File tidak valid!");
+      }
+    } catch (err) {
+      showToast("❌ Gagal membaca file backup!");
+    }
+  };
+  reader.readAsText(file);
+});
 // Inisialisasi awal
 loadToday();
 updateProfileUI();
