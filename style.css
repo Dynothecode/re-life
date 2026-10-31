@@ -1,6 +1,3 @@
-/* =========================================
-   1. VARIABLES & THEME (APPLE FITNESS STYLE)
-   ========================================= */
 :root {
   color-scheme: dark;
   --bg-base: #000000;
@@ -8,292 +5,157 @@
   --bg-input: #2C2C2E;
   --text-primary: #FFFFFF;
   --text-secondary: #8E8E93;
-  
   --accent-blue: #0A84FF;
   --accent-green: #30D158;
   --accent-cyan: #64D2FF;
   --accent-orange: #FF9F0A;
-  
+  --accent-rpg: #BF5AF2; 
   --font-main: -apple-system, BlinkMacSystemFont, "Outfit", "Segoe UI", Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
-  --font-display: 'Syne', sans-serif;
-  
   --transition: all 0.25s ease-out;
 }
 
-/* =========================================
-   2. BASE & RESET
-   ========================================= */
 * { box-sizing: border-box; }
 body { 
-  margin: 0; 
-  font-family: var(--font-main); 
-  background: var(--bg-base); 
-  color: var(--text-primary);
-  padding: 0 16px calc(env(safe-area-inset-bottom) + 100px); 
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
+  margin: 0; font-family: var(--font-main); background: var(--bg-base); color: var(--text-primary);
+  padding: 0 16px calc(env(safe-area-inset-bottom) + 100px); min-height: 100vh; -webkit-font-smoothing: antialiased;
 }
 
 .hidden { display: none !important; }
-
 h1 { font-size: 1.8rem; margin: 0 0 20px; font-weight: 700; letter-spacing: -0.5px; }
 h2 { font-size: 1.1rem; margin: 0; font-weight: 600; letter-spacing: -0.3px; }
 
 /* Utilities */
-.mt-8 { margin-top: 8px; }
-.mt-12 { margin-top: 12px; }
-.mt-16 { margin-top: 16px; }
-.m-0 { margin: 0; }
-.flex-1 { flex: 1; }
-.text-right { text-align: right; }
-.text-center { text-align: center; }
+.mt-8 { margin-top: 8px; } .mt-12 { margin-top: 12px; } .mt-16 { margin-top: 16px; }
+.m-0 { margin: 0; } .flex-1 { flex: 1; } .text-right { text-align: right; } .text-center { text-align: center; }
 .row { display: flex; gap: 12px; flex-wrap: wrap; }
-.row-between { display: flex; justify-content: space-between; align-items: center; gap: 10px;}
 
-/* =========================================
-   3. SPLASH SCREEN (Opening Animation)
-   ========================================= */
+/* Splash & HUD */
 .splash {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-  background: var(--bg-base); z-index: 9999;
-  display: flex; align-items: center; justify-content: center;
-  animation: fadeOutSplash 0.8s ease-in-out 1.5s forwards;
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-base); z-index: 9999;
+  display: flex; align-items: center; justify-content: center; animation: fadeOutSplash 0.8s ease-in-out 1.5s forwards;
 }
-.splash-text {
-  font-family: var(--font-display);
-  color: var(--accent-green);
-  font-size: 1.5rem; letter-spacing: 5px; text-transform: uppercase;
-  animation: pulseGlow 1.5s infinite alternate;
-}
-@keyframes fadeOutSplash {
-  to { opacity: 0; visibility: hidden; pointer-events: none; }
-}
-@keyframes pulseGlow {
-  from { text-shadow: 0 0 5px var(--accent-green); opacity: 0.5; }
-  to { text-shadow: 0 0 20px var(--accent-green), 0 0 40px var(--accent-green); opacity: 1; }
-}
+.splash-text { font-family: var(--font-display); color: var(--accent-green); font-size: 1.5rem; letter-spacing: 5px; animation: pulseGlow 1.5s infinite alternate; }
+@keyframes fadeOutSplash { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+@keyframes pulseGlow { from { text-shadow: 0 0 5px var(--accent-green); opacity: 0.5; } to { text-shadow: 0 0 20px var(--accent-green); opacity: 1; } }
 
-/* =========================================
-   4. HEAD-UP DISPLAY (HUD)
-   ========================================= */
 .hud-top {
-  position: fixed; top: calc(env(safe-area-inset-top) + 16px); left: 16px;
-  display: flex; align-items: center; gap: 12px;
-  z-index: 500;
-  background: rgba(28, 28, 30, 0.8);
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  padding: 8px 16px 8px 8px; border-radius: 99px;
-  border: 1px solid #38383A;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  position: fixed; top: calc(env(safe-area-inset-top) + 16px); left: 16px; display: flex; align-items: center; gap: 12px;
+  z-index: 500; background: rgba(28, 28, 30, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  padding: 8px 16px 8px 8px; border-radius: 99px; border: 1px solid #38383A; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
   animation: dropDown 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
 }
-@keyframes dropDown {
-  from { opacity: 0; transform: translateY(-30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+@keyframes dropDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
 
 .hud-avatar-wrapper { position: relative; cursor: pointer; transition: var(--transition); }
 .hud-avatar-wrapper:active { transform: scale(0.9); }
-
 .hud-avatar {
-  width: 40px; height: 40px; border-radius: 50%;
-  background: var(--bg-input); color: var(--text-primary);
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 1.1rem;
-  box-shadow: 0 0 12px rgba(48, 209, 88, 0.6); 
-  border: 2px solid var(--accent-green);
+  width: 40px; height: 40px; border-radius: 50%; background: var(--bg-input); display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 1.1rem; box-shadow: 0 0 12px rgba(48, 209, 88, 0.6); border: 2px solid var(--accent-green); overflow: hidden; position: relative;
 }
-
 .hud-level-badge {
-  position: absolute; bottom: -4px; right: -4px;
-  background: var(--accent-blue); color: #fff;
-  font-size: 0.65rem; font-weight: bold; font-family: var(--font-mono);
-  padding: 2px 6px; border-radius: 10px;
-  border: 2px solid var(--bg-card);
-  box-shadow: 0 0 8px var(--accent-blue);
+  position: absolute; bottom: -4px; right: -4px; background: var(--accent-blue); color: #fff; font-size: 0.65rem; font-weight: bold;
+  font-family: var(--font-mono); padding: 2px 6px; border-radius: 10px; border: 2px solid var(--bg-card); box-shadow: 0 0 8px var(--accent-blue);
 }
-
 .hud-stats { display: flex; flex-direction: column; gap: 4px; width: 80px; }
 .hud-streak { font-size: 0.75rem; font-weight: 700; color: var(--accent-orange); line-height: 1; }
 .hud-exp-container { width: 100%; height: 6px; background: #3A3A3C; border-radius: 99px; overflow: hidden; }
-.hud-exp-fill {
-  height: 100%; width: 0%; background: var(--accent-green);
-  box-shadow: 0 0 10px var(--accent-green);
-  transition: width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
+.hud-exp-fill { height: 100%; width: 0%; background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); transition: width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
 .app-content { padding-top: calc(env(safe-area-inset-top) + 80px); }
 
-/* =========================================
-   5. CARDS & ANIMATIONS
-   ========================================= */
+/* Cards */
 .card { 
-  background: var(--bg-card); 
-  border-radius: 20px; 
-  padding: 20px; 
-  margin-bottom: 16px; 
-  transition: var(--transition);
+  background: var(--bg-card); border-radius: 20px; padding: 20px; margin-bottom: 16px; transition: var(--transition);
   animation: slideUp 0.4s ease-out backwards;
 }
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(15px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.delay-1 { animation-delay: 0.1s; }
-.delay-2 { animation-delay: 0.15s; }
-.delay-3 { animation-delay: 0.2s; }
-.delay-4 { animation-delay: 0.25s; }
-.delay-5 { animation-delay: 0.3s; }
-.delay-6 { animation-delay: 0.35s; }
-.delay-7 { animation-delay: 0.4s; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-/* =========================================
-   6. FORMS & INPUTS
-   ========================================= */
+/* Home Dashboard */
+.hero-card { background: linear-gradient(145deg, #1C1C1E, #000000); border: 1px solid #333; }
+.tier-badge { 
+  display: inline-block; background: linear-gradient(90deg, #FFD700, #FFA500); color: #000; 
+  padding: 4px 16px; border-radius: 20px; font-weight: 800; font-family: var(--font-mono); font-size: 0.9rem; margin-top: 8px;
+}
+.milestone-list { list-style: none; padding: 0; margin: 0; }
+.milestone-list li { padding: 10px 0; border-bottom: 1px solid #333; font-size: 0.9rem; color: var(--text-secondary); }
+.milestone-list li:last-child { border-bottom: none; }
+.quote-container { text-align: center; padding: 30px 20px; opacity: 0.8; }
+.quote-container p { font-size: 1.1rem; font-style: italic; color: var(--text-secondary); line-height: 1.5; }
+
+/* QUEST SLIDER */
+.slider-container {
+  display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 16px; padding-bottom: 20px;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none; /* Firefox */
+}
+.slider-container::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+.slider-card {
+  scroll-snap-align: center; min-width: 85vw; max-width: 85vw; margin-bottom: 0 !important;
+  display: flex; flex-direction: column; border: 1px solid #333;
+}
+@media (min-width: 600px) {
+  .slider-card { min-width: 400px; max-width: 400px; }
+}
+.quest-subtitle { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 16px; }
+.quest-list { display: flex; flex-direction: column; gap: 12px; }
+.quest-item {
+  display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05);
+  padding: 12px 16px; border-radius: 12px; cursor: pointer; transition: var(--transition); border: 1px solid transparent;
+}
+.quest-item:active { transform: scale(0.98); }
+.quest-item.done { opacity: 0.5; background: rgba(48, 209, 88, 0.1); border-color: var(--accent-green); }
+.quest-item.done .quest-title { text-decoration: line-through; }
+.quest-title { font-size: 0.95rem; font-weight: 500; }
+.quest-exp { font-size: 0.85rem; font-family: var(--font-mono); color: var(--accent-green); font-weight: bold; }
+
+.golden-week-card { background: linear-gradient(145deg, #2C2C2E, #1a1a00); border: 1px solid #FFD700; }
+.golden-week-card .quest-exp { color: #FFD700; text-shadow: 0 0 5px #FFD700; }
+
+/* Forms & Buttons */
 label { display: block; font-size: 0.9rem; color: var(--text-secondary); margin: 12px 0 8px; font-weight: 500;}
 input[type=number], input[type=time], input[type=text], input[type=date], textarea, select { 
-  width: 100%; padding: 14px; border-radius: 12px; border: none;
-  background: var(--bg-input); color: var(--text-primary); font: inherit; transition: var(--transition);
+  width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--bg-input); color: var(--text-primary); font: inherit; transition: var(--transition);
 }
-input:focus, textarea:focus, select:focus {
-  outline: none; box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.3);
-}
+input:focus, textarea:focus, select:focus { outline: none; box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.3); }
 
-/* =========================================
-   7. BUTTONS (iOS PILL STYLE)
-   ========================================= */
 button { 
-  flex: 1; min-width: 110px; padding: 14px 16px; border-radius: 99px; border: none;
-  background: var(--accent-blue); color: #fff; font-weight: 600; font-size: 1rem; 
+  flex: 1; min-width: 110px; padding: 14px 16px; border-radius: 99px; border: none; background: var(--accent-blue); color: #fff; font-weight: 600; font-size: 1rem; 
   cursor: pointer; transition: var(--transition); font-family: var(--font-main);
 }
 button:active { opacity: 0.7; transform: scale(0.97); }
 button.secondary { background: var(--bg-input); color: var(--text-primary); }
-button.secondary:hover { background: #3A3A3C; }
 button.active { background: var(--accent-green); color: #000; }
 
-.save-btn { 
-  width: 100%; padding: 18px; font-size: 1.1rem; border-radius: 20px;
-  background: var(--accent-green); color: #000;
-  margin-top: 10px; font-weight: 700;
-}
-
-/* =========================================
-   8. HABITS & CUSTOM CHECKBOXES
-   ========================================= */
-.habit { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #38383A; }
-.habit:last-child { border-bottom: none; padding-bottom: 0; }
-.habit-label { margin: 0; font-size: 1rem; color: var(--text-primary); cursor: pointer; font-weight: 400;}
-
-.custom-checkbox { display: none; }
-.checkbox-ui {
-  width: 28px; height: 28px; border-radius: 50%; border: 2px solid #555;
-  display: flex; align-items: center; justify-content: center; transition: var(--transition);
-}
-.custom-checkbox:checked + .checkbox-ui {
-  background: var(--accent-green); border-color: var(--accent-green);
-}
-.checkbox-ui::after {
-  content: ''; width: 6px; height: 12px; border: solid #000; border-width: 0 2px 2px 0;
-  transform: rotate(45deg) scale(0); transition: var(--transition); margin-bottom: 2px;
-}
-.custom-checkbox:checked + .checkbox-ui::after { transform: rotate(45deg) scale(1); }
-
-/* =========================================
-   9. WATER COUNTER & PROFILE
-   ========================================= */
-.water-buttons { display: flex; gap: 8px; width: 120px; margin: 0; }
-.water-buttons button { min-width: 50px; height: 44px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border-radius: 12px;}
-
+/* Profile */
 .profile-header { text-align: center; }
 .avatar { 
-  width: 86px; height: 86px; border-radius: 50%; background: var(--bg-input); 
-  margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: 600;
-  color: var(--text-secondary);
+  width: 86px; height: 86px; border-radius: 50%; background: var(--bg-input); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; 
+  font-size: 2.2rem; font-weight: 600; color: var(--text-secondary); position: relative; overflow: hidden; cursor: pointer;
 }
+.avatar-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.edit-badge { position: absolute; bottom: 0; right: 0; background: var(--bg-card); border: 2px solid var(--text-secondary); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; transition: var(--transition); opacity: 0; }
+.avatar:hover .edit-badge { opacity: 1; }
+@media (hover: none) { .edit-badge { opacity: 1; } }
 .age-ticker { font-size: 1.1rem; color: var(--accent-cyan); font-weight: 600; margin-top: 8px; line-height: 1.4; font-variant-numeric: tabular-nums;}
 .age-label { margin-top: 24px; color: var(--text-secondary); font-weight: 600; font-size: 0.85rem; text-transform: uppercase;}
 
-/* =========================================
-   10. BOTTOM NAV & TOAST
-   ========================================= */
+/* Nav & Toast */
 .bottom-nav { 
-  position: fixed; bottom: 0; left: 0; right: 0; background: rgba(28, 28, 30, 0.85); 
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  position: fixed; bottom: 0; left: 0; right: 0; background: rgba(28, 28, 30, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   display: flex; border-top: 1px solid #38383A; padding-bottom: env(safe-area-inset-bottom); z-index: 600;
 }
 .nav-item { flex: 1; text-align: center; padding: 16px; font-size: 0.85rem; color: var(--text-secondary); cursor: pointer; transition: var(--transition); font-weight: 500;}
 .nav-item.active { color: var(--accent-blue); }
+.icon { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; vertical-align: middle; margin-right: 4px; margin-bottom: 2px;}
+.icon-orange { stroke: var(--accent-orange); } .icon-blue { stroke: var(--accent-blue); } .icon-green { stroke: var(--accent-green); }
 
 .toast {
-  position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px);
-  background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(10px); color: #fff; 
-  padding: 16px 24px; border-radius: 99px; font-weight: 600; font-size: 1rem;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); 
-  z-index: 999; text-align: center; pointer-events: none; opacity: 0; border: 1px solid #38383A;
+  position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(28, 28, 30, 0.95); color: #fff; 
+  padding: 16px 24px; border-radius: 99px; font-weight: 600; font-size: 1rem; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); 
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); z-index: 999; text-align: center; pointer-events: none; opacity: 0; border: 1px solid #38383A;
 }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-/* =========================================
-   11. DESKTOP RESPONSIVE
-   ========================================= */
 @media (min-width: 600px) {
   body { max-width: 600px; margin: 0 auto; }
   .bottom-nav { max-width: 600px; margin: 0 auto; border-radius: 20px 20px 0 0; border: 1px solid #38383A; border-bottom: none;}
-}
-/* CSS untuk Icon SVG */
-.icon {
-  width: 20px;
-  height: 20px;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
-  vertical-align: middle;
-  margin-right: 8px;
-  margin-bottom: 3px;
-}
-.icon-green { stroke: var(--accent-green); }
-.icon-orange { stroke: var(--accent-orange); }
-.icon-blue { stroke: var(--accent-blue); }
-/* Avatar Image & Edit Badge */
-.avatar, .hud-avatar {
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-}
-
-.avatar-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-.edit-badge {
-  position: absolute;
-  bottom: 0; right: 0;
-  background: var(--bg-card);
-  border: 2px solid var(--text-secondary);
-  border-radius: 50%;
-  width: 28px; height: 28px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.8rem;
-  opacity: 0;
-  transition: var(--transition);
-}
-.avatar:hover .edit-badge {
-  opacity: 1; /* Muncul saat mouse diarahkan */
-}
-
-/* Khusus di HP, biar badge selalu kelihatan */
-@media (hover: none) {
-  .edit-badge { opacity: 1; }
-}
-/* ... (taruh di paling bawah) ... */
-#export-btn, #import-btn {
-  font-size: 0.9rem;
-  padding: 12px;
 }
