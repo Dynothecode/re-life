@@ -24,12 +24,10 @@
 <!-- ================= HEAD-UP DISPLAY (HUD) ================= -->
 <header class="hud-top">
   <div class="hud-avatar-wrapper" onclick="switchView('profile')">
-    <!-- INI BAGIAN YANG DIUBAH -->
     <div class="hud-avatar" id="hud-avatar-box">
       <span id="hud-avatar-initial">U</span>
       <img id="hud-avatar-img" class="avatar-img hidden" src="" alt="Avatar">
     </div>
-    <!-- ======================= -->
     <div class="hud-level-badge" id="hud-level">1</div>
   </div>
   <div class="hud-stats">
@@ -49,11 +47,11 @@
   
   <div class="card delay-1">
     <h2>
-  <svg class="icon icon-blue" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
-  Tidur & 
-  <svg class="icon icon-orange" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>
-  Bangun
-</h2>
+      <svg class="icon icon-blue" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
+      Tidur & 
+      <svg class="icon icon-orange" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>
+      Bangun
+    </h2>
     <div class="row mt-12">
       <button id="btn-sleep" class="secondary">Waktunya Tidur</button>
       <button id="btn-wake" class="secondary">Aku Baru Bangun</button>
@@ -63,9 +61,9 @@
 
   <div class="card delay-2">
     <h2>
-  <svg class="icon icon-blue" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-  Karier & Kerja
-</h2>
+      <svg class="icon icon-blue" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+      Karier & Kerja
+    </h2>
     <div class="habit">
       <label class="habit-label" for="kerja-hadir">Masuk Kerja / Hadir</label>
       <input type="checkbox" id="kerja-hadir" class="custom-checkbox">
@@ -79,9 +77,9 @@
     <div class="habit" style="border:none; padding:0;">
       <div>
         <h2 class="m-0">
-  <svg class="icon icon-blue" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"></path></svg>
-  Minum Air
-</h2>
+          <svg class="icon icon-blue" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"></path></svg>
+          Minum Air
+        </h2>
         <span style="font-size:0.9rem; color:var(--text-secondary); font-family: var(--font-mono);" id="water-text">0 / 8 Gelas</span>
       </div>
       <div class="water-buttons">
@@ -93,9 +91,9 @@
 
   <div class="card delay-4">
     <h2>
-  <svg class="icon icon-green" viewBox="0 0 24 24"><path d="M14.4 14.4 9.6 9.6"></path><path d="M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z"></path><path d="m21.5 21.5-1.4-1.4"></path><path d="M3.9 3.9 2.5 2.5"></path><path d="M6.404 12.768a2 2 0 1 1-2.829-2.829l1.768-1.767a2 2 0 1 1-2.828-2.829l2.828-2.828a2 2 0 1 1 2.829 2.828l1.767-1.768a2 2 0 1 1 2.829 2.829z"></path></svg>
-  Workout
-</h2>
+      <svg class="icon icon-green" viewBox="0 0 24 24"><path d="M14.4 14.4 9.6 9.6"></path><path d="M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z"></path><path d="m21.5 21.5-1.4-1.4"></path><path d="M3.9 3.9 2.5 2.5"></path><path d="M6.404 12.768a2 2 0 1 1-2.829-2.829l1.768-1.767a2 2 0 1 1-2.828-2.829l2.828-2.828a2 2 0 1 1 2.829 2.828l1.767-1.768a2 2 0 1 1 2.829 2.829z"></path></svg>
+      Workout
+    </h2>
     <div class="row">
       <div class="flex-1">
         <label>Push-up (x25)</label>
@@ -112,9 +110,9 @@
 
   <div class="card delay-5">
     <h2>
-  <svg class="icon icon-blue" viewBox="0 0 24 24"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"></path><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"></path></svg>
-  Otak & Mental
-</h2>
+      <svg class="icon icon-blue" viewBox="0 0 24 24"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"></path><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"></path></svg>
+      Otak & Mental
+    </h2>
     <div class="habit">
       <label class="habit-label" for="baca">Belajar / Baca Buku</label>
       <input type="checkbox" id="baca" class="custom-checkbox">
@@ -126,7 +124,7 @@
       <label for="meditasi" class="checkbox-ui"></label>
     </div>
     <div class="habit">
-      <label class="habit-label" for="detox"> Digital Detox</label>
+      <label class="habit-label" for="detox">Digital Detox</label>
       <input type="checkbox" id="detox" class="custom-checkbox">
       <label for="detox" class="checkbox-ui"></label>
     </div>
@@ -134,9 +132,9 @@
 
   <div class="card delay-6">
     <h2>
-  <svg class="icon icon-blue" viewBox="0 0 24 24"><path d="M4 4v16"></path><path d="M20 4v16"></path><path d="M4 8h16"></path><path d="M4 16h16"></path><path d="M8 4v4"></path><path d="M16 4v4"></path><path d="M8 16v4"></path><path d="M16 16v4"></path></svg>
-  Rutinitas & Makan
-</h2>
+      <svg class="icon icon-blue" viewBox="0 0 24 24"><path d="M4 4v16"></path><path d="M20 4v16"></path><path d="M4 8h16"></path><path d="M4 16h16"></path><path d="M8 4v4"></path><path d="M16 4v4"></path><path d="M8 16v4"></path><path d="M16 16v4"></path></svg>
+      Rutinitas & Makan
+    </h2>
     <div class="habit">
       <label class="habit-label" for="mandi">Mandi</label>
       <input type="checkbox" id="mandi" class="custom-checkbox">
@@ -153,9 +151,9 @@
 
   <div class="card delay-7">
     <h2>
-  <svg class="icon icon-orange" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path><path d="M8 7h8"></path><path d="M8 11h8"></path></svg>
-  Jurnal & 3 Hal Bersyukur
-</h2>
+      <svg class="icon icon-orange" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path><path d="M8 7h8"></path><path d="M8 11h8"></path></svg>
+      Jurnal & 3 Hal Bersyukur
+    </h2>
     <textarea id="journal" rows="3" placeholder="Cerita hari ini..." class="mt-12"></textarea>
     <input type="text" id="g1" placeholder="Syukur 1..." class="mt-8">
     <input type="text" id="g2" placeholder="Syukur 2..." class="mt-8">
@@ -166,19 +164,16 @@
 </div>
 
 <!-- ================= HALAMAN PROFILE ================= -->
-  <!-- ================= HALAMAN PROFILE ================= -->
 <div id="view-profile" class="hidden app-content">
   <h1>Profil Karakter</h1>
   
   <div class="card profile-header">
-    <!-- GANTI BAGIAN INI -->
     <div class="avatar" id="avatar-container" onclick="document.getElementById('avatar-upload').click()">
       <span id="avatar-initial">U</span>
       <img id="profile-avatar-img" class="avatar-img hidden" src="" alt="Avatar">
       <div class="edit-badge">📷</div>
     </div>
     <input type="file" id="avatar-upload" accept="image/*" class="hidden">
-    <!-- SAMPAI SINI -->
 
     <label>Nama</label>
     <input type="text" id="profile-name" placeholder="Nama Kamu">
@@ -206,8 +201,8 @@
     <p class="text-right mt-8" style="font-size:0.8rem; color:var(--text-secondary);" id="exp-text">0 / 250 EXP</p>
   </div>
 
-  <button id="save-profile" class="secondary" style="width:100%;">Simpan Profil</button>
-    <button id="save-profile" class="secondary" style="width:100%; margin-bottom: 10px;">Simpan Profil</button>
+  <!-- TOMBOL SIMPAN PROFIL -->
+  <button id="save-profile" class="secondary" style="width:100%; margin-bottom: 10px;">Simpan Profil</button>
   
   <!-- FITUR BACKUP -->
   <div style="display: flex; gap: 10px;">
@@ -216,38 +211,17 @@
   </div>
   <input type="file" id="import-file" accept=".json" class="hidden">
 </div>
-<!-- PENUTUP DIV VIEW-PROFILE DI ATAS JANGAN SAMPAI HILANG -->
-
-  <div class="card">
-    <div class="habit" style="border:none; padding-bottom:0;">
-      <div>
-        <h2 class="m-0" style="font-size:1.5rem;" id="display-level">Level 1</h2>
-        <span style="color:var(--accent-orange); font-weight:bold;" id="display-tier">Rookie</span>
-      </div>
-      <div class="text-right">
-        <span style="font-size:0.8rem; color:var(--text-secondary);">Total EXP</span>
-        <h3 class="m-0" style="font-family: var(--font-mono);" id="display-total-exp">0</h3>
-      </div>
-    </div>
-    <div class="hud-exp-container" style="height: 10px; margin-top: 16px;">
-      <div class="hud-exp-fill" id="exp-fill"></div>
-    </div>
-    <p class="text-right mt-8" style="font-size:0.8rem; color:var(--text-secondary);" id="exp-text">0 / 250 EXP</p>
-  </div>
-
-  <button id="save-profile" class="secondary" style="width:100%;">Simpan Profil</button>
-</div>
 
 <!-- ================= NAVIGASI BAWAH ================= -->
 <div class="bottom-nav">
   <div class="nav-item active" onclick="switchView('home')">
-  <svg class="icon" style="margin-right:4px; margin-bottom:2px;" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-  Home
-</div>
-<div class="nav-item" onclick="switchView('profile')">
-  <svg class="icon" style="margin-right:4px; margin-bottom:2px;" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-  Profil
-</div>
+    <svg class="icon" style="margin-right:4px; margin-bottom:2px;" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    Home
+  </div>
+  <div class="nav-item" onclick="switchView('profile')">
+    <svg class="icon" style="margin-right:4px; margin-bottom:2px;" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+    Profil
+  </div>
 </div>
 
 <!-- Toast Container -->
