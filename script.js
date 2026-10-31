@@ -1,4 +1,4 @@
-const KEY = 'life-reset-rpg-v2'; // Ganti key biar database lama nggak bentrok
+const KEY = 'life-reset-rpg-v2'; 
 const $ = id => document.getElementById(id);
 
 // ================= QUOTES =================
@@ -12,7 +12,6 @@ const QUOTES = [
 ];
 
 // ================= STATE & DATA =================
-// Struktur Data baru dengan Quests
 let db = JSON.parse(localStorage.getItem(KEY)) || {
   profile: { name: 'User', dob: '', avatar: '' },
   stats: { totalExp: 0, streak: 0, lastSaveDate: '' },
@@ -60,14 +59,12 @@ function checkResets() {
   const now = new Date();
   const today = now.toISOString().slice(0,10);
   
-  // Daily Reset (jika beda hari)
   if (db.lastReset.daily !== today) {
     db.quests.daily.forEach(q => q.done = false);
     db.lastReset.daily = today;
     saveDB();
   }
 
-  // Weekly Reset (Hari Senin)
   if (now.getDay() === 1) {
     const lastW = db.lastReset.weekly ? new Date(db.lastReset.weekly) : new Date(0);
     if (now.getTime() - lastW.getTime() > 6 * 24 * 60 * 60 * 1000) {
@@ -77,14 +74,12 @@ function checkResets() {
     }
   }
 
-  // Monthly Reset (Tanggal 1)
   if (now.getDate() === 1 && db.lastReset.monthly !== today) {
     db.quests.monthly.forEach(q => q.done = false);
     db.lastReset.monthly = today;
     saveDB();
   }
 
-  // Yearly Reset (Januari 1)
   if (now.getMonth() === 0 && now.getDate() === 1 && db.lastReset.yearly !== today) {
     db.quests.yearly.forEach(q => q.done = false);
     db.lastReset.yearly = today;
@@ -96,13 +91,10 @@ function checkResets() {
 function getGoldenWeekMultiplier() {
   const now = new Date();
   const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-  
-  // Cek apakah sekarang masuk 7 hari terakhir di bulan ini
   const isGoldenWeek = now.getDate() > (lastDayOfMonth - 7);
   
   if (!isGoldenWeek) return { active: false, multiplier: 1 };
 
-  // Kalau aktif, cek multiplier berdasarkan streak
   let mult = 2; 
   if (db.stats.streak >= 7) mult = 4;
   else if (db.stats.streak >= 5) mult = 3;
@@ -116,7 +108,7 @@ function getLevelData() {
   let expNeeded = 250;
   let expLeft = db.stats.totalExp;
 
-  while (expLeft >= expNeeded && lvl < 100) { // Max Level 100
+  while (expLeft >= expNeeded && lvl < 100) {
     expLeft -= expNeeded;
     lvl++;
     expNeeded = lvl * 250;
@@ -140,7 +132,6 @@ function updateHUD() {
   const { lvl, expLeft, expNeeded } = getLevelData();
   const tier = getTier(lvl);
   
-  // HUD
   $('hud-level').innerText = lvl;
   $('hud-streak').innerText = db.stats.streak;
   $('hud-exp-fill').style.width = `${(expLeft / expNeeded) * 100}%`;
@@ -155,7 +146,6 @@ function updateHUD() {
     if(db.profile.name) $('hud-avatar-initial').innerText = db.profile.name.charAt(0).toUpperCase();
   }
 
-  // Home Dashboard
   $('home-level').innerText = `Lv. ${lvl}`;
   $('home-tier').innerText = `TIER ${tier}`;
   $('home-total-exp').innerText = db.stats.totalExp;
@@ -203,11 +193,10 @@ function renderQuests() {
   renderList('list-event', db.quests.event, true);
   renderList('list-yearly', db.quests.yearly);
 
-  // Update Golden Week Status
   const gw = getGoldenWeekMultiplier();
   if (gw.active) {
     $('golden-week-status').innerText = `AKTIF! EXP x${gw.multiplier}`;
-    $('golden-week-status').style.color = '#FFD700';
+    $('golden-week-status').style.color = '#FF453A';
     $('golden-week-status').style.fontWeight = 'bold';
   } else {
     $('golden-week-status').innerText = `Belum aktif (Aktif tgl 24-31)`;
@@ -262,7 +251,10 @@ function switchView(viewName) {
   document.querySelectorAll('.nav-item')[navIdx].classList.add('active');
   
   if (viewName === 'profile') updateProfileUI();
-  if (viewName === 'quests') renderQuests();
+  if (viewName === 'quests') {
+    renderQuests();
+    setTimeout(updateCardRotations, 50); // Delay sedikit biar render CSS selesai
+  }
 }
 
 function showToast(message) {
@@ -272,13 +264,11 @@ function showToast(message) {
   setTimeout(() => { toast.classList.remove('show'); }, 3000);
 }
 
-// Quote random
 function setRandomQuote() {
   const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
   $('daily-quote').innerText = `"${q}"`;
 }
 
-// Profil
 function updateProfileUI() {
   $('profile-name').value = db.profile.name;
   $('profile-dob').value = db.profile.dob;
@@ -295,7 +285,7 @@ function updateProfileUI() {
   
   const { lvl, expLeft, expNeeded } = getLevelData();
   $('display-level').innerText = `Level ${lvl}`;
-  $('display-tier').innerText = getTier(lvl);
+  $('display-tier').innerText = `Tier ${getTier(lvl)}`;
   $('display-total-exp').innerText = db.stats.totalExp;
   $('exp-fill').style.width = `${(expLeft / expNeeded) * 100}%`;
   $('exp-text').innerText = `${expLeft} / ${expNeeded} EXP`;
@@ -310,7 +300,6 @@ $('save-profile').onclick = () => {
   showToast("✅ Profil disimpan!");
 };
 
-// Upload Foto
 $('avatar-upload').addEventListener('change', function(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -336,7 +325,6 @@ $('avatar-upload').addEventListener('change', function(e) {
   reader.readAsDataURL(file);
 });
 
-// Backup Data
 $('export-btn').onclick = () => {
   const blob = new Blob([JSON.stringify(db, null, 2)], { type: "application/json" });
   const a = document.createElement('a');
@@ -364,7 +352,6 @@ $('import-file').addEventListener('change', function(e) {
   reader.readAsText(file);
 });
 
-// Ticker Umur
 setInterval(() => {
   if (!db.profile.dob) { $('age-display').innerText = "Isi tanggal lahir dulu."; return; }
   const now = new Date(); const birth = new Date(db.profile.dob);
@@ -380,6 +367,35 @@ setInterval(() => {
   $('age-display').innerHTML = `${years} Thn, ${months} Bln, ${days} Hari<br>${hours} Jam, ${mins} Mnt, ${secs} Dtk`;
 }, 1000);
 
+// ================= ANIMASI 3D FLIP (COVER FLOW) =================
+const questSlider = document.getElementById('quest-slider');
+const questCards = document.querySelectorAll('.slider-card');
+
+function updateCardRotations() {
+  if (!questSlider || questCards.length === 0) return;
+  
+  const sliderCenter = questSlider.getBoundingClientRect().left + questSlider.offsetWidth / 2;
+  
+  questCards.forEach(card => {
+    const cardRect = card.getBoundingClientRect();
+    const cardCenter = cardRect.left + cardRect.width / 2;
+    
+    const distanceFromCenter = (cardCenter - sliderCenter) / questSlider.offsetWidth;
+    const rotateY = Math.max(-45, Math.min(45, distanceFromCenter * -100)); 
+    const scale = Math.max(0.8, 1 - Math.abs(distanceFromCenter) * 0.5);
+    const opacity = Math.max(0.4, 1 - Math.abs(distanceFromCenter) * 2);
+
+    card.style.transform = `perspective(1000px) rotateY(${rotateY}deg) scale(${scale})`;
+    card.style.opacity = opacity;
+  });
+}
+
+questSlider.addEventListener('scroll', () => {
+  window.requestAnimationFrame(updateCardRotations);
+});
+
+window.addEventListener('resize', updateCardRotations);
+
 // INITIALIZATION
 checkResets();
 updateHUD();
@@ -387,5 +403,6 @@ updateProfileUI();
 renderQuests();
 renderMilestones();
 setRandomQuote();
+setTimeout(updateCardRotations, 100);
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
