@@ -1,26 +1,30 @@
 /* =========================================
-   1. VARIABLES & THEME
+   1. VARIABLES & THEME (APPLE FITNESS STYLE)
    ========================================= */
 :root {
   color-scheme: dark;
-  /* Colors */
-  --bg-base: #0b1020;
-  --bg-surface: rgba(19, 26, 48, 0.7);
-  --bg-surface-hover: rgba(28, 37, 65, 0.9);
-  --border-color: rgba(255, 255, 255, 0.08);
   
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
+  /* Apple iOS System Colors */
+  --bg-base: #000000;
+  --bg-card: #1C1C1E;
+  --bg-card-hover: #2C2C2E;
+  --bg-input: #2C2C2E;
   
-  --accent-primary: #3b82f6;
-  --accent-rpg: #8b5cf6;
-  --accent-success: #10b981;
-  --accent-warning: #f59e0b;
+  /* Text */
+  --text-primary: #FFFFFF;
+  --text-secondary: #8E8E93;
   
-  --font-main: 'Outfit', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  /* Accents */
+  --accent-blue: #0A84FF;
+  --accent-green: #30D158;
+  --accent-cyan: #64D2FF;
+  --accent-orange: #FF9F0A;
+  --accent-red: #FF453A;
   
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* iOS Native Font Stack */
+  --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  
+  --transition: all 0.25s ease-out;
 }
 
 /* =========================================
@@ -32,10 +36,9 @@ body {
   font-family: var(--font-main); 
   background: var(--bg-base); 
   color: var(--text-primary);
-  background-image: radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
-  background-repeat: no-repeat;
-  padding: calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 100px); 
+  padding: calc(env(safe-area-inset-top) + 20px) 16px calc(env(safe-area-inset-bottom) + 100px); 
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
 .hidden { display: none !important; }
@@ -43,11 +46,11 @@ body {
 /* =========================================
    3. TYPOGRAPHY
    ========================================= */
-h1 { font-size: 1.5rem; margin: 0 0 16px; font-weight: 700; }
-h2 { font-size: 1.1rem; margin: 0; font-weight: 600; }
+h1 { font-size: 1.8rem; margin: 0 0 20px; font-weight: 700; letter-spacing: -0.5px; }
+h2 { font-size: 1.1rem; margin: 0; font-weight: 600; letter-spacing: -0.3px; }
 
 /* =========================================
-   4. UTILITIES (Pengganti Inline Style)
+   4. UTILITIES
    ========================================= */
 .mt-8 { margin-top: 8px; }
 .mt-12 { margin-top: 12px; }
@@ -57,105 +60,98 @@ h2 { font-size: 1.1rem; margin: 0; font-weight: 600; }
 .flex-1 { flex: 1; }
 .text-right { text-align: right; }
 .text-center { text-align: center; }
-.row { display: flex; gap: 10px; flex-wrap: wrap; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; }
 .row-between { display: flex; justify-content: space-between; align-items: center; gap: 10px;}
 
 /* =========================================
    5. CARDS & ANIMATIONS
    ========================================= */
 .card { 
-  background: var(--bg-surface); 
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 16px; 
+  background: var(--bg-card); 
+  border-radius: 20px; 
   padding: 20px; 
   margin-bottom: 16px; 
-  border: 1px solid var(--border-color);
   transition: var(--transition);
-  animation: fadeInUp 0.5s ease-out backwards;
+  animation: slideUp 0.4s ease-out backwards;
 }
-.card:hover { border-color: rgba(139, 92, 246, 0.3); }
 
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 /* Card Delays */
-.delay-1 { animation-delay: 0.1s; }
-.delay-2 { animation-delay: 0.2s; }
-.delay-3 { animation-delay: 0.3s; }
-.delay-4 { animation-delay: 0.4s; }
-.delay-5 { animation-delay: 0.5s; }
-.delay-6 { animation-delay: 0.6s; }
-.delay-7 { animation-delay: 0.7s; }
+.delay-1 { animation-delay: 0.05s; }
+.delay-2 { animation-delay: 0.1s; }
+.delay-3 { animation-delay: 0.15s; }
+.delay-4 { animation-delay: 0.2s; }
+.delay-5 { animation-delay: 0.25s; }
+.delay-6 { animation-delay: 0.3s; }
+.delay-7 { animation-delay: 0.35s; }
 
 /* =========================================
    6. FORMS & INPUTS
    ========================================= */
-label { display: block; font-size: 0.9rem; color: var(--text-secondary); margin: 12px 0 6px; font-weight: 400;}
+label { display: block; font-size: 0.9rem; color: var(--text-secondary); margin: 12px 0 8px; font-weight: 500;}
 input[type=number], input[type=time], input[type=text], input[type=date], textarea, select { 
-  width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color);
-  background: rgba(11, 16, 32, 0.5); color: var(--text-primary); font: inherit; transition: var(--transition);
+  width: 100%; padding: 14px; border-radius: 12px; border: none;
+  background: var(--bg-input); color: var(--text-primary); font: inherit; transition: var(--transition);
 }
 input:focus, textarea:focus, select:focus {
-  outline: none; border-color: var(--accent-rpg); box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+  outline: none; box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.3);
 }
 
 /* =========================================
-   7. BUTTONS
+   7. BUTTONS (iOS PILL STYLE)
    ========================================= */
 button { 
-  flex: 1; min-width: 110px; padding: 14px 16px; border-radius: 12px; border: 0;
-  background: var(--accent-primary); color: #fff; font-weight: 600; font-size: 0.95rem; 
+  flex: 1; min-width: 110px; padding: 14px 16px; border-radius: 99px; border: none;
+  background: var(--accent-blue); color: #fff; font-weight: 600; font-size: 1rem; 
   cursor: pointer; transition: var(--transition); font-family: var(--font-main);
 }
-button:hover { transform: translateY(-2px); filter: brightness(1.1); }
-button:active { transform: translateY(0); }
-button.secondary { background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); }
-button.secondary:hover { background: var(--bg-surface-hover); border-color: var(--text-secondary); }
-button.active { background: var(--accent-success); color: #fff; border-color: var(--accent-success); }
+button:active { opacity: 0.7; transform: scale(0.97); }
+button.secondary { background: var(--bg-input); color: var(--text-primary); }
+button.secondary:hover { background: #3A3A3C; }
+button.active { background: var(--accent-green); color: #000; }
 
 .save-btn { 
-  width: 100%; padding: 18px; font-size: 1.1rem; 
-  background: linear-gradient(135deg, var(--accent-rpg), var(--accent-primary)); 
-  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); 
-  margin-top: 10px; 
+  width: 100%; padding: 18px; font-size: 1.1rem; border-radius: 20px;
+  background: var(--accent-green); color: #000;
+  margin-top: 10px; font-weight: 700;
 }
+.save-btn:active { opacity: 0.8; }
 
 /* =========================================
    8. HERO SECTION & EXP BAR
    ========================================= */
 .hero-card {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.1));
-  border-color: rgba(139, 92, 246, 0.4);
+  background: linear-gradient(135deg, #2C2C2E 0%, #1C1C1E 100%);
 }
-.hero-streak { color: var(--accent-warning); font-weight: 700; font-family: var(--font-mono); font-size: 1.4rem;}
-.hero-level { font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px; }
-.hero-total-exp { margin: 0; font-family: var(--font-mono); color: var(--accent-success); font-size: 1.4rem; }
-.exp-label { font-size: 0.8rem; color: var(--text-secondary); }
+.hero-streak { color: var(--accent-orange); font-weight: 800; font-size: 1.6rem; letter-spacing: -0.5px;}
+.hero-level { font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px; font-weight: 500;}
+.hero-total-exp { margin: 0; color: var(--accent-green); font-size: 1.4rem; font-weight: 700; }
+.exp-label { font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;}
 
-.exp-bar-bg { width: 100%; background: rgba(0,0,0,0.3); height: 12px; border-radius: 6px; margin-top: 12px; overflow: hidden; border: 1px solid var(--border-color);}
-.exp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent-rpg), var(--accent-primary)); width: 0%; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+.exp-bar-bg { width: 100%; background: #3A3A3C; height: 10px; border-radius: 99px; margin-top: 16px; overflow: hidden; }
+.exp-bar-fill { height: 100%; background: var(--accent-green); width: 0%; transition: width 1s cubic-bezier(0.1, 0.7, 0.1, 1); }
 
 /* =========================================
-   9. HABITS & CUSTOM CHECKBOXES
+   9. HABITS & CUSTOM CHECKBOXES (APPLE STYLE)
    ========================================= */
-.habit { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-color); }
+.habit { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #38383A; }
 .habit:last-child { border-bottom: none; padding-bottom: 0; }
-.habit-label { margin: 0; font-size: 1rem; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 10px;}
+.habit-label { margin: 0; font-size: 1rem; color: var(--text-primary); cursor: pointer; font-weight: 400;}
 
 .custom-checkbox { display: none; }
 .checkbox-ui {
-  width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--text-secondary);
+  width: 28px; height: 28px; border-radius: 50%; border: 2px solid #555;
   display: flex; align-items: center; justify-content: center; transition: var(--transition);
 }
 .custom-checkbox:checked + .checkbox-ui {
-  background: var(--accent-success); border-color: var(--accent-success);
-  transform: scale(1.1);
+  background: var(--accent-green); border-color: var(--accent-green);
 }
 .checkbox-ui::after {
-  content: ''; width: 6px; height: 12px; border: solid white; border-width: 0 2px 2px 0;
+  content: ''; width: 6px; height: 12px; border: solid #000; border-width: 0 2px 2px 0;
   transform: rotate(45deg) scale(0); transition: var(--transition); margin-bottom: 2px;
 }
 .custom-checkbox:checked + .checkbox-ui::after { transform: rotate(45deg) scale(1); }
@@ -163,36 +159,35 @@ button.active { background: var(--accent-success); color: #fff; border-color: va
 /* =========================================
    10. WATER COUNTER & PROFILE
    ========================================= */
-.water-buttons { display: flex; gap: 8px; width: 110px; margin: 0; }
-.water-buttons button { min-width: 44px; height: 44px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+.water-buttons { display: flex; gap: 8px; width: 120px; margin: 0; }
+.water-buttons button { min-width: 50px; height: 44px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border-radius: 12px;}
 
 .profile-header { text-align: center; }
 .avatar { 
-  width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-rpg), var(--accent-primary)); 
-  margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold;
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+  width: 86px; height: 86px; border-radius: 50%; background: var(--bg-input); 
+  margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: 600;
+  color: var(--text-secondary);
 }
-.age-ticker { font-size: 1.1rem; color: var(--accent-primary); font-family: var(--font-mono); margin-top: 8px; line-height: 1.4;}
-.age-label { margin-top: 24px; color: var(--accent-primary); font-weight: bold; }
+.age-ticker { font-size: 1.1rem; color: var(--accent-cyan); font-weight: 600; margin-top: 8px; line-height: 1.4; font-variant-numeric: tabular-nums;}
+.age-label { margin-top: 24px; color: var(--text-secondary); font-weight: 600; font-size: 0.85rem; text-transform: uppercase;}
 
 /* =========================================
-   11. BOTTOM NAV & TOAST
+   11. BOTTOM NAV & TOAST (iOS TAB BAR)
    ========================================= */
 .bottom-nav { 
-  position: fixed; bottom: 0; left: 0; right: 0; background: rgba(19, 26, 48, 0.9); 
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  display: flex; border-top: 1px solid var(--border-color); padding-bottom: env(safe-area-inset-bottom); z-index: 100;
+  position: fixed; bottom: 0; left: 0; right: 0; background: rgba(28, 28, 30, 0.85); 
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  display: flex; border-top: 1px solid #38383A; padding-bottom: env(safe-area-inset-bottom); z-index: 100;
 }
-.nav-item { flex: 1; text-align: center; padding: 16px; font-size: 0.9rem; color: var(--text-secondary); cursor: pointer; transition: var(--transition);}
-.nav-item:hover { color: var(--text-primary); }
-.nav-item.active { color: var(--accent-rpg); font-weight: 700; }
+.nav-item { flex: 1; text-align: center; padding: 16px; font-size: 0.85rem; color: var(--text-secondary); cursor: pointer; transition: var(--transition); font-weight: 500;}
+.nav-item.active { color: var(--accent-blue); }
 
 .toast {
-  position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(100px);
-  background: rgba(16, 185, 129, 0.95); backdrop-filter: blur(8px); color: #fff; 
-  padding: 14px 24px; border-radius: 12px; font-weight: 600; font-size: 1rem;
-  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
-  z-index: 999; text-align: center; pointer-events: none; opacity: 0;
+  position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(10px); color: #fff; 
+  padding: 16px 24px; border-radius: 99px; font-weight: 600; font-size: 1rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); 
+  z-index: 999; text-align: center; pointer-events: none; opacity: 0; border: 1px solid #38383A;
 }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
@@ -200,6 +195,6 @@ button.active { background: var(--accent-success); color: #fff; border-color: va
    12. RESPONSIVE (DESKTOP)
    ========================================= */
 @media (min-width: 600px) {
-  body { max-width: 600px; margin: 0 auto; }
-  .bottom-nav { max-width: 600px; margin: 0 auto; border-radius: 20px 20px 0 0; border: 1px solid var(--border-color); border-bottom: none;}
+  body { max-width: 500px; margin: 0 auto; }
+  .bottom-nav { max-width: 500px; margin: 0 auto; border-radius: 20px 20px 0 0; border: 1px solid #38383A; border-bottom: none;}
 }
