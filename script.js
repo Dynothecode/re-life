@@ -1,190 +1,150 @@
-// ================= STATE =================
-const KEY = 'life-reset-rpg';
-let db = JSON.parse(localStorage.getItem(KEY)) || {
-  profile: { name: 'User', dob: '', avatar: '' }, // <-- avatar ditambahin
-  stats: { totalExp: 0, streak: 0, lastSaveDate: '' },
-  today: { sleep: null, wake: null, water: 0, pushup: 0, situp: 0, lari: 0, 
-           kerjaHadir: false, kerjaJam: 0,
-           baca: false, meditasi: false, detox: false, mandi: false, makan: 0, 
-           journal: '', gratitude: ['','',''], saved: false }
-};
-const saveDB = () => localStorage.setItem(KEY, JSON.stringify(db));
+const KEY = 'life-reset-rpg-v2'; // Ganti key biar database lama nggak bentrok
 const $ = id => document.getElementById(id);
+
+// ================= QUOTES =================
+const QUOTES = [
+  "Disiplin adalah jembatan antara tujuan dan pencapaian.",
+  "Jangan hitung hari-harinya, buatlah hari-harimu berarti.",
+  "Kamu tidak harus hebat untuk memulai, tapi kamu harus memulai untuk menjadi hebat.",
+  "Kualitas hidupmu ditentukan oleh kualitas kebiasaanmu.",
+  "Satu langkah kecil hari ini lebih baik dari rencana besar besok.",
+  "Rasa sakit dari disiplin jauh lebih ringan daripada rasa sakit dari penyesalan."
+];
+
+// ================= STATE & DATA =================
+// Struktur Data baru dengan Quests
+let db = JSON.parse(localStorage.getItem(KEY)) || {
+  profile: { name: 'User', dob: '', avatar: '' },
+  stats: { totalExp: 0, streak: 0, lastSaveDate: '' },
+  quests: {
+    daily: [
+      { id: 'd1', text: 'Minum 8 Gelas Air', exp: 20, done: false },
+      { id: 'd2', text: 'Olahraga / Workout', exp: 30, done: false },
+      { id: 'd3', text: 'Baca Buku 10 Halaman', exp: 15, done: false },
+      { id: 'd4', text: 'Digital Detox 2 Jam', exp: 25, done: false },
+      { id: 'd5', text: 'Tidur Sebelum Jam 12', exp: 20, done: false }
+    ],
+    weekly: [
+      { id: 'w1', text: 'Workout 3x dalam seminggu', exp: 100, done: false },
+      { id: 'w2', text: 'Selesaikan 1 Buku', exp: 150, done: false },
+      { id: 'w3', text: 'Bersih-bersih Kamar / Kos', exp: 80, done: false }
+    ],
+    monthly: [
+      { id: 'm1', text: 'Lari jarak total 20 KM', exp: 300, done: false },
+      { id: 'm2', text: 'Hemat uang minimal 20% dari gaji', exp: 400, done: false },
+      { id: 'm3', text: 'Belajar 1 Skill/Topik Baru', exp: 350, done: false }
+    ],
+    event: [
+      { id: 'e1', text: 'Golden Week: Klaim 500 EXP', exp: 500, done: false },
+      { id: 'e2', text: 'Golden Week: Streak 7 Hari', exp: 700, done: false }
+    ],
+    yearly: [
+      { id: 'y1', text: 'Self Reward: Traveling / Cuti', exp: 2000, done: false },
+      { id: 'y2', text: 'Self Reward: Beli Gadget Baru', exp: 3000, done: false },
+      { id: 'y3', text: 'Baca 12 Buku dalam setahun', exp: 1500, done: false }
+    ]
+  },
+  lastReset: { daily: '', weekly: '', monthly: '', yearly: '' },
+  milestones: [
+    { text: "Level 5 Tercapai", unlocked: false },
+    { text: "Streak 7 Hari", unlocked: false },
+    { text: "Total 1000 EXP", unlocked: false }
+  ]
+};
+
+const saveDB = () => localStorage.setItem(KEY, JSON.stringify(db));
 const todayDate = new Date().toISOString().slice(0,10);
 
-// Reset Harian jika beda tanggal
-if (db.stats.lastSaveDate !== todayDate && db.stats.lastSaveDate !== '') {
-    db.today = { sleep: null, wake: null, water: 0, pushup: 0, situp: 0, lari: 0, 
-                 kerjaHadir: false, kerjaJam: 0,
-                 baca: false, meditasi: false, detox: false, mandi: false, makan: 0, 
-                 journal: '', gratitude: ['','',''], saved: false };
-    let last = new Date(db.stats.lastSaveDate);
-    let curr = new Date(todayDate);
-    let diffDays = Math.ceil((curr - last) / (1000 * 60 * 60 * 24));
-    if (diffDays > 1) db.stats.streak = 0; // Streak putus
+// ================= LOGIKA RESET WAKTU =================
+function checkResets() {
+  const now = new Date();
+  const today = now.toISOString().slice(0,10);
+  
+  // Daily Reset (jika beda hari)
+  if (db.lastReset.daily !== today) {
+    db.quests.daily.forEach(q => q.done = false);
+    db.lastReset.daily = today;
     saveDB();
-}
+  }
 
-// ================= TOAST NOTIFICATION =================
-function showToast(message) {
-  const toast = $('toast');
-  toast.innerText = message;
-  toast.classList.add('show');
-  setTimeout(() => { toast.classList.remove('show'); }, 3000);
-}
+  // Weekly Reset (Hari Senin)
+  if (now.getDay() === 1) {
+    const lastW = db.lastReset.weekly ? new Date(db.lastReset.weekly) : new Date(0);
+    if (now.getTime() - lastW.getTime() > 6 * 24 * 60 * 60 * 1000) {
+      db.quests.weekly.forEach(q => q.done = false);
+      db.lastReset.weekly = today;
+      saveDB();
+    }
+  }
 
-// ================= NAVIGASI =================
-function switchView(viewName) {
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  if (viewName === 'home') {
-    $('view-home').classList.remove('hidden');
-    $('view-profile').classList.add('hidden');
-    document.querySelectorAll('.nav-item')[0].classList.add('active');
-  } else {
-    $('view-home').classList.add('hidden');
-    $('view-profile').classList.remove('hidden');
-    document.querySelectorAll('.nav-item')[1].classList.add('active');
-    updateProfileUI();
+  // Monthly Reset (Tanggal 1)
+  if (now.getDate() === 1 && db.lastReset.monthly !== today) {
+    db.quests.monthly.forEach(q => q.done = false);
+    db.lastReset.monthly = today;
+    saveDB();
+  }
+
+  // Yearly Reset (Januari 1)
+  if (now.getMonth() === 0 && now.getDate() === 1 && db.lastReset.yearly !== today) {
+    db.quests.yearly.forEach(q => q.done = false);
+    db.lastReset.yearly = today;
+    saveDB();
   }
 }
 
-// ================= LOGIKA HOME =================
-function loadToday() {
-  $('water-text').innerText = `${db.today.water} / 8 Gelas`;
-  $('pushup').value = db.today.pushup || '';
-  $('situp').value = db.today.situp || '';
-  $('lari').value = db.today.lari || '';
-  $('kerja-hadir').checked = db.today.kerjaHadir;
-  $('kerja-jam').value = db.today.kerjaJam || '';
-  $('baca').checked = db.today.baca;
-  $('meditasi').checked = db.today.meditasi;
-  $('detox').checked = db.today.detox;
-  $('mandi').checked = db.today.mandi;
-  $('makan').value = db.today.makan;
-  $('journal').value = db.today.journal;
-  $('g1').value = db.today.gratitude[0] || '';
-  $('g2').value = db.today.gratitude[1] || '';
-  $('g3').value = db.today.gratitude[2] || '';
+// ================= LOGIKA GOLDEN WEEK =================
+function getGoldenWeekMultiplier() {
+  const now = new Date();
+  const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
   
-  if(db.today.sleep) { $('btn-sleep').innerText = `Tidur: ${db.today.sleep}`; $('btn-sleep').classList.add('active'); }
-  if(db.today.wake) { $('btn-wake').innerText = `Bangun: ${db.today.wake}`; $('btn-wake').classList.add('active'); }
-  if(db.today.sleep && db.today.wake) $('sleep-status').innerText = "Waktu tidur & bangun sudah tercatat.";
+  // Cek apakah sekarang masuk 7 hari terakhir di bulan ini
+  const isGoldenWeek = now.getDate() > (lastDayOfMonth - 7);
   
-  updateHUD();
+  if (!isGoldenWeek) return { active: false, multiplier: 1 };
+
+  // Kalau aktif, cek multiplier berdasarkan streak
+  let mult = 2; 
+  if (db.stats.streak >= 7) mult = 4;
+  else if (db.stats.streak >= 5) mult = 3;
+
+  return { active: true, multiplier: mult };
 }
 
-window.changeWater = (val) => {
-  db.today.water = Math.max(0, db.today.water + val);
-  $('water-text').innerText = `${db.today.water} / 8 Gelas`;
-  saveDB();
-}
-
-// Tombol Tidur & Bangun
-$('btn-sleep').onclick = () => {
-  const now = new Date();
-  db.today.sleep = now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
-  $('btn-sleep').innerText = `Tidur: ${db.today.sleep}`;
-  $('btn-sleep').classList.add('active');
-  saveDB();
-};
-$('btn-wake').onclick = () => {
-  const now = new Date();
-  db.today.wake = now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
-  $('btn-wake').innerText = `Bangun: ${db.today.wake}`;
-  $('btn-wake').classList.add('active');
-  saveDB();
-};
-
-// Simpan & Klaim EXP
-$('save-btn').onclick = () => {
-  if (db.today.saved) { showToast("⚠️ Hari ini sudah diklaim!"); return; }
-  
-  let exp = 0;
-  
-  const hadir = $('kerja-hadir').checked;
-  const jamKerja = parseFloat($('kerja-jam').value) || 0;
-  if (hadir) exp += 10;
-  exp += (jamKerja * 15);
-  
-  exp += (db.today.water * 2);
-  if (db.today.water >= 8) exp += 10;
-  
-  const pu = parseInt($('pushup').value) || 0;
-  const su = parseInt($('situp').value) || 0;
-  const lari = parseFloat($('lari').value) || 0;
-  exp += (Math.floor(pu / 25) * 5);
-  exp += (Math.floor(su / 25) * 5);
-  exp += (lari * 10);
-  
-  if ($('baca').checked) exp += 5;
-  if ($('meditasi').checked) exp += 10;
-  if ($('detox').checked) exp += 15;
-  
-  if ($('mandi').checked) exp += 5;
-  const makanVal = parseInt($('makan').value);
-  exp += makanVal;
-  
-  const jurnalIsi = $('journal').value.trim().length > 0;
-  const syukurIsi = $('g1').value.trim() || $('g2').value.trim() || $('g3').value.trim();
-  if (jurnalIsi && syukurIsi) exp += 15;
-  
-  if (db.today.sleep) exp += 10; 
-  if (db.today.wake) exp += 10;
-  
-  let yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  const yDate = yesterday.toISOString().slice(0,10);
-  
-  if (db.stats.lastSaveDate === yDate) {
-    db.stats.streak += 1;
-  } else if (db.stats.lastSaveDate !== todayDate) {
-    db.stats.streak = 1;
-  }
-  
-  let multiplier = 1;
-  if (db.stats.streak >= 60) multiplier = 3;
-  else if (db.stats.streak >= 30) multiplier = 2;
-  else if (db.stats.streak >= 14) multiplier = 1.5;
-  else if (db.stats.streak >= 7) multiplier = 1.2;
-  
-  let finalExp = Math.floor(exp * multiplier);
-  
-  db.today = {
-    sleep: db.today.sleep, wake: db.today.wake, water: db.today.water, 
-    pushup: pu, situp: su, lari: lari,
-    kerjaHadir: hadir, kerjaJam: jamKerja,
-    baca: $('baca').checked, meditasi: $('meditasi').checked, detox: $('detox').checked, 
-    mandi: $('mandi').checked, makan: makanVal, 
-    journal: $('journal').value, gratitude: [$('g1').value, $('g2').value, $('g3').value], 
-    saved: true
-  };
-  
-  db.stats.totalExp += finalExp;
-  db.stats.lastSaveDate = todayDate;
-  saveDB();
-  
-  updateHUD();
-  showToast(`🔥 Mantap! +${finalExp} EXP (Streak: ${db.stats.streak})`);
-  loadToday();
-};
-
-// ================= LOGIKA HUD & PROFILE (UPDATED) =================
-function updateHUD() {
+// ================= LOGIKA LEVEL & TIER =================
+function getLevelData() {
   let lvl = 1;
   let expNeeded = 250;
   let expLeft = db.stats.totalExp;
-  
-  while (expLeft >= expNeeded) {
+
+  while (expLeft >= expNeeded && lvl < 100) { // Max Level 100
     expLeft -= expNeeded;
     lvl++;
     expNeeded = lvl * 250;
   }
+  return { lvl, expLeft, expNeeded };
+}
+
+function getTier(lvl) {
+  if (lvl >= 100) return "SSS";
+  if (lvl >= 90) return "SS";
+  if (lvl >= 80) return "S";
+  if (lvl >= 70) return "A";
+  if (lvl >= 50) return "B";
+  if (lvl >= 30) return "C";
+  if (lvl >= 15) return "D";
+  return "E";
+}
+
+// ================= RENDER UI =================
+function updateHUD() {
+  const { lvl, expLeft, expNeeded } = getLevelData();
+  const tier = getTier(lvl);
   
+  // HUD
   $('hud-level').innerText = lvl;
   $('hud-streak').innerText = db.stats.streak;
   $('hud-exp-fill').style.width = `${(expLeft / expNeeded) * 100}%`;
   
-  // Logika Tampil Foto HUD
   if (db.profile.avatar) {
     $('hud-avatar-img').src = db.profile.avatar;
     $('hud-avatar-img').classList.remove('hidden');
@@ -194,21 +154,135 @@ function updateHUD() {
     $('hud-avatar-initial').classList.remove('hidden');
     if(db.profile.name) $('hud-avatar-initial').innerText = db.profile.name.charAt(0).toUpperCase();
   }
+
+  // Home Dashboard
+  $('home-level').innerText = `Lv. ${lvl}`;
+  $('home-tier').innerText = `TIER ${tier}`;
+  $('home-total-exp').innerText = db.stats.totalExp;
+  $('home-exp-fill').style.width = `${(expLeft / expNeeded) * 100}%`;
+  $('home-exp-text').innerText = `${expLeft} / ${expNeeded} EXP ke Lvl ${lvl+1}`;
 }
 
-function getTier(lvl) {
-  if (lvl >= 50) return "Legend";
-  if (lvl >= 25) return "Master";
-  if (lvl >= 10) return "Discipline";
-  if (lvl >= 5) return "Fighter";
-  return "Rookie";
+function renderQuests() {
+  const renderList = (listId, questList, isEvent = false) => {
+    const container = $(listId);
+    container.innerHTML = '';
+    const gw = getGoldenWeekMultiplier();
+    
+    questList.forEach(q => {
+      let actualExp = q.exp;
+      let expText = `+${actualExp} EXP`;
+
+      if (isEvent) {
+         if (!gw.active) {
+             actualExp = 0;
+             expText = "LOCKED";
+         } else {
+             actualExp = q.exp * gw.multiplier;
+             expText = `+${actualExp} EXP (x${gw.multiplier})`;
+         }
+      }
+
+      const div = document.createElement('div');
+      div.className = `quest-item ${q.done ? 'done' : ''}`;
+      div.innerHTML = `
+        <span class="quest-title">${q.text}</span>
+        <span class="quest-exp">${q.done ? '✅ Selesai' : expText}</span>
+      `;
+      
+      if (!q.done && (!isEvent || gw.active)) {
+        div.onclick = () => claimQuest(q, actualExp);
+      }
+      container.appendChild(div);
+    });
+  };
+
+  renderList('list-daily', db.quests.daily);
+  renderList('list-weekly', db.quests.weekly);
+  renderList('list-monthly', db.quests.monthly);
+  renderList('list-event', db.quests.event, true);
+  renderList('list-yearly', db.quests.yearly);
+
+  // Update Golden Week Status
+  const gw = getGoldenWeekMultiplier();
+  if (gw.active) {
+    $('golden-week-status').innerText = `AKTIF! EXP x${gw.multiplier}`;
+    $('golden-week-status').style.color = '#FFD700';
+    $('golden-week-status').style.fontWeight = 'bold';
+  } else {
+    $('golden-week-status').innerText = `Belum aktif (Aktif tgl 24-31)`;
+    $('golden-week-status').style.color = 'var(--text-secondary)';
+  }
 }
 
+function renderMilestones() {
+  const container = $('milestone-list');
+  container.innerHTML = '';
+  db.milestones.forEach(m => {
+    const li = document.createElement('li');
+    li.innerText = `${m.unlocked ? '✅' : '🔒'} ${m.text}`;
+    if(m.unlocked) li.style.color = 'var(--accent-green)';
+    container.appendChild(li);
+  });
+}
+
+// ================= LOGIKA KLAIM EXP =================
+function claimQuest(quest, expGained) {
+  quest.done = true;
+  db.stats.totalExp += expGained;
+  saveDB();
+  
+  showToast(`🔥 Mantap! +${expGained} EXP`);
+  updateHUD();
+  renderQuests();
+  checkMilestones();
+}
+
+function checkMilestones() {
+  let changed = false;
+  const { lvl } = getLevelData();
+  
+  if (lvl >= 5 && !db.milestones[0].unlocked) { db.milestones[0].unlocked = true; changed = true; }
+  if (db.stats.streak >= 7 && !db.milestones[1].unlocked) { db.milestones[1].unlocked = true; changed = true; }
+  if (db.stats.totalExp >= 1000 && !db.milestones[2].unlocked) { db.milestones[2].unlocked = true; changed = true; }
+
+  if (changed) {
+    saveDB();
+    renderMilestones();
+  }
+}
+
+// ================= NAVIGASI & INIT =================
+function switchView(viewName) {
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  ['home', 'quests', 'profile'].forEach(v => $(`view-${v}`).classList.add('hidden'));
+  
+  $(`view-${viewName}`).classList.remove('hidden');
+  const navIdx = viewName === 'home' ? 0 : viewName === 'quests' ? 1 : 2;
+  document.querySelectorAll('.nav-item')[navIdx].classList.add('active');
+  
+  if (viewName === 'profile') updateProfileUI();
+  if (viewName === 'quests') renderQuests();
+}
+
+function showToast(message) {
+  const toast = $('toast');
+  toast.innerText = message;
+  toast.classList.add('show');
+  setTimeout(() => { toast.classList.remove('show'); }, 3000);
+}
+
+// Quote random
+function setRandomQuote() {
+  const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+  $('daily-quote').innerText = `"${q}"`;
+}
+
+// Profil
 function updateProfileUI() {
   $('profile-name').value = db.profile.name;
   $('profile-dob').value = db.profile.dob;
   
-  // Logika Tampil Foto Profil
   if (db.profile.avatar) {
     $('profile-avatar-img').src = db.profile.avatar;
     $('profile-avatar-img').classList.remove('hidden');
@@ -219,21 +293,12 @@ function updateProfileUI() {
     if(db.profile.name) $('avatar-initial').innerText = db.profile.name.charAt(0).toUpperCase();
   }
   
-  let lvl = 1;
-  let expNeeded = 250;
-  let expLeft = db.stats.totalExp;
-  
-  while (expLeft >= expNeeded) {
-    expLeft -= expNeeded;
-    lvl++;
-    expNeeded = lvl * 250;
-  }
-  
+  const { lvl, expLeft, expNeeded } = getLevelData();
   $('display-level').innerText = `Level ${lvl}`;
+  $('display-tier').innerText = getTier(lvl);
   $('display-total-exp').innerText = db.stats.totalExp;
   $('exp-fill').style.width = `${(expLeft / expNeeded) * 100}%`;
-  $('exp-text').innerText = `${expLeft} / ${expNeeded} EXP ke Lvl ${lvl+1}`;
-  $('display-tier').innerText = getTier(lvl);
+  $('exp-text').innerText = `${expLeft} / ${expNeeded} EXP`;
 }
 
 $('save-profile').onclick = () => {
@@ -242,123 +307,85 @@ $('save-profile').onclick = () => {
   saveDB();
   updateProfileUI();
   updateHUD();
-  showToast("✅ Profil berhasil disimpan!");
+  showToast("✅ Profil disimpan!");
 };
 
-// Ticker Umur Realtime
-setInterval(() => {
-  if (!db.profile.dob) {
-    $('age-display').innerText = "Isi tanggal lahir dulu.";
-    return;
-  }
-  const now = new Date();
-  const birth = new Date(db.profile.dob);
-  
-  let years = now.getFullYear() - birth.getFullYear();
-  let months = now.getMonth() - birth.getMonth();
-  let days = now.getDate() - birth.getDate();
-  let hours = now.getHours() - birth.getHours();
-  let mins = now.getMinutes() - birth.getMinutes();
-  let secs = now.getSeconds() - birth.getSeconds();
-
-  if (secs < 0) { secs += 60; mins--; }
-  if (mins < 0) { mins += 60; hours--; }
-  if (hours < 0) { hours += 24; days--; }
-  if (days < 0) { 
-    const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
-    days += prevMonth; months--; 
-  }
-  if (months < 0) { months += 12; years--; }
-
-  $('age-display').innerHTML = `${years} Thn, ${months} Bln, ${days} Hari<br>${hours} Jam, ${mins} Mnt, ${secs} Dtk`;
-}, 1000);
-
-// ================= LOGIKA UPLOAD FOTO PROFIL =================
+// Upload Foto
 $('avatar-upload').addEventListener('change', function(e) {
   const file = e.target.files[0];
   if (!file) return;
-
   const reader = new FileReader();
   reader.onload = function(event) {
     const img = new Image();
     img.onload = function() {
       const canvas = document.createElement('canvas');
       const MAX_SIZE = 200;
-      let width = img.width;
-      let height = img.height;
-
-      if (width > height) {
-        if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
-      } else {
-        if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
-      }
-
-      canvas.width = width;
-      canvas.height = height;
+      let width = img.width, height = img.height;
+      if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } } 
+      else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } }
+      canvas.width = width; canvas.height = height;
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, width, height);
-
-      const base64String = canvas.toDataURL('image/jpeg', 0.8);
-      
-      db.profile.avatar = base64String;
+      db.profile.avatar = canvas.toDataURL('image/jpeg', 0.8);
       saveDB();
-      
-      updateHUD();
-      updateProfileUI();
-      showToast("📸 Foto profil berhasil diperbarui!");
+      updateHUD(); updateProfileUI();
+      showToast("📸 Foto profil diperbarui!");
     };
     img.src = event.target.result;
   };
   reader.readAsDataURL(file);
 });
-// ================= FITUR EXPORT & IMPORT =================
+
+// Backup Data
 $('export-btn').onclick = () => {
-  const dataStr = JSON.stringify(db, null, 2);
-  const blob = new Blob([dataStr], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  
+  const blob = new Blob([JSON.stringify(db, null, 2)], { type: "application/json" });
   const a = document.createElement('a');
-  a.href = url;
-  a.download = `life-reset-backup-${todayDate}.json`;
-  document.body.appendChild(a);
+  a.href = URL.createObjectURL(blob);
+  a.download = `backup-life-reset-${todayDate}.json`;
   a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  showToast("📥 Backup berhasil di-download!");
+  showToast("📥 Data berhasil di-backup!");
 };
 
-$('import-btn').onclick = () => {
-  $('import-file').click();
-};
+$('import-btn').onclick = () => $('import-file').click();
 
 $('import-file').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-
+  const file = e.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = function(event) {
     try {
-      const importedData = JSON.parse(event.target.result);
-      
-      // Validasi data sederhana
-      if (importedData.profile && importedData.stats && importedData.today) {
-        db = importedData; // Timpa database lama
-        saveDB();
-        loadToday();
-        updateProfileUI();
-        updateHUD();
+      const imported = JSON.parse(event.target.result);
+      if (imported.profile && imported.stats) {
+        db = imported; saveDB();
+        updateHUD(); updateProfileUI(); renderQuests(); renderMilestones();
         showToast("📤 Data berhasil di-restore!");
-      } else {
-        showToast("❌ File tidak valid!");
-      }
-    } catch (err) {
-      showToast("❌ Gagal membaca file backup!");
-    }
+      } else { showToast("❌ File backup tidak valid!"); }
+    } catch (err) { showToast("❌ Gagal membaca file!"); }
   };
   reader.readAsText(file);
 });
-// Inisialisasi awal
-loadToday();
+
+// Ticker Umur
+setInterval(() => {
+  if (!db.profile.dob) { $('age-display').innerText = "Isi tanggal lahir dulu."; return; }
+  const now = new Date(); const birth = new Date(db.profile.dob);
+  let years = now.getFullYear() - birth.getFullYear();
+  let months = now.getMonth() - birth.getMonth();
+  let days = now.getDate() - birth.getDate();
+  let hours = now.getHours() - birth.getHours();
+  let mins = now.getMinutes() - birth.getMinutes();
+  let secs = now.getSeconds() - birth.getSeconds();
+  if (secs < 0) { secs += 60; mins--; } if (mins < 0) { mins += 60; hours--; }
+  if (hours < 0) { hours += 24; days--; } if (days < 0) { const pm = new Date(now.getFullYear(), now.getMonth(), 0).getDate(); days += pm; months--; }
+  if (months < 0) { months += 12; years--; }
+  $('age-display').innerHTML = `${years} Thn, ${months} Bln, ${days} Hari<br>${hours} Jam, ${mins} Mnt, ${secs} Dtk`;
+}, 1000);
+
+// INITIALIZATION
+checkResets();
+updateHUD();
 updateProfileUI();
+renderQuests();
+renderMilestones();
+setRandomQuote();
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
